@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# bash로 실행
 
 set -euo pipefail                                     # 에러시 실패 처리(배포 실패로 표기되게 함)
 

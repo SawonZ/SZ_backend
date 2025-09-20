@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# bash로 실행
 
 set -euo pipefail              # 엄격 모드 적용
 

@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# 이 스크립트를 bash 인터프리터로 실행
 
 # -e: 에러시 종료, -u: 미정의 변수 사용시 에러, -o pipefail: 파이프라인 중간 에러도 감지
 set -euo pipefail
