@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# 엄격 모드: 에러/미정의 변수/파이프 실패 감지
 set -euo pipefail
 
 # 애플리케이션 JAR 위치

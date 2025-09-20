@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail              # 엄격 모드 적용
+set -euo pipefail
 
 PID_FILE="/home/ubuntu/run/app.pid"
 # start.sh에서 기록한 PID 파일 경로

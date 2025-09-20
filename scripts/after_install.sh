@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# -e: 에러시 종료, -u: 미정의 변수 사용시 에러, -o pipefail: 파이프라인 중간 에러도 감지
 set -euo pipefail
 
 # 배포/로그/PID 보관 디렉터리 생성(-p: 이미 있어도 OK)

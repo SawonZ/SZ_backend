@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail                                     # 에러시 실패 처리(배포 실패로 표기되게 함)
+set -euo pipefail
 
 # 애플리케이션 헬스 체크
 # -s: silent(진행바/메시지 숨김)
