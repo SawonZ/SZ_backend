@@ -1,4 +1,5 @@
-#!/usr/bin/env bash                 # 이 스크립트를 bash 인터프리터로 실행
+#!/usr/bin/env bash
+# 이 스크립트를 bash 인터프리터로 실행
 
 # 엄격 모드: 에러/미정의 변수/파이프 실패 감지
 set -euo pipefail
