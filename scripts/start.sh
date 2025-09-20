@@ -20,6 +20,7 @@ if [ -f "$PID_FILE" ] && ps -p "$(cat "$PID_FILE")" >/dev/null 2>&1; then
 fi
 
 # 외부 설정을 확실히 읽게 함
+cd "$APP_DIR"
 EXTRA_CFG="--spring.config.additional-location=file:/home/ubuntu/app/"
 
 # 백그라운드로 JAR 실행
