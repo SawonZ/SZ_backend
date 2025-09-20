@@ -46,6 +46,7 @@ jobs:
           mkdir -p bundle/scripts
           cp appspec.yml bundle/
           cp -r scripts/* bundle/scripts/
+          chmod +x bundle/scripts/*.sh
           JAR=$(ls build/libs/*.jar | head -n 1)
           cp "$JAR" bundle/sawonz-backend.jar
           cd bundle && zip -r ../deploy-${GITHUB_SHA}.zip . && cd ..
