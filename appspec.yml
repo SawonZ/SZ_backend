@@ -20,18 +20,18 @@ permissions:
 
 hooks:
   ApplicationStop:
-    - location: deploy/stop.sh
+    - location: scripts/stop.sh
       timeout: 60
       runas: ubuntu
   AfterInstall:
-    - location: deploy/after_install.sh
+    - location: scripts/after_install.sh
       timeout: 60
       runas: root
   ApplicationStart:
-    - location: deploy/start.sh
+    - location: scripts/start.sh
       timeout: 120
       runas: ubuntu
   ValidateService:
-    - location: deploy/validate.sh
+    - location: scripts/validate.sh
       timeout: 60
       runas: ubuntu
