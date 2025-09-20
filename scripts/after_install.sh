@@ -1,0 +1,13 @@
+#!/usr/bin/env bash     # 이 스크립트를 bash 인터프리터로 실행
+
+# -e: 에러시 종료, -u: 미정의 변수 사용시 에러, -o pipefail: 파이프라인 중간 에러도 감지
+set -euo pipefail
+
+# 배포/로그/PID 보관 디렉터리 생성(-p: 이미 있어도 OK)
+sudo mkdir -p /home/ubuntu/app /home/ubuntu/logs /home/ubuntu/run
+
+# /home/ubuntu 이하의 소유자/그룹을 ubuntu로 재귀 변경(권한 문제 방지)
+sudo chown -R ubuntu:ubuntu /home/ubuntu
+
+# 배포 훅에서 실행할 .sh 파일들에 실행 권한 추가
+chmod +x /home/ubuntu/deploy/*.sh

@@ -38,5 +38,4 @@
 *.icloud
 
 # properties 제외
-**/application-local.properties
-**/application-product.properties
+**/application-private.properties
