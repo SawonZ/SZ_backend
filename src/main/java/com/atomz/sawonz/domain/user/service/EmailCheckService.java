@@ -1,8 +1,14 @@
 package com.atomz.sawonz.domain.user.service;
 
+import com.atomz.sawonz.domain.user.dto.EmailCheckDto.VerificationCodeCheckRequest;
 import com.atomz.sawonz.domain.user.dto.EmailCheckDto.VerificationCodeSave;
+import com.atomz.sawonz.domain.user.entity.EmailCheckEntity;
 import com.atomz.sawonz.domain.user.repository.EmailCheckRepository;
+import com.atomz.sawonz.global.exception.ErrorException;
+import com.atomz.sawonz.global.exception.ResponseCode;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -55,10 +61,26 @@ public class EmailCheckService {
                             () -> emailCheckRepository.save(VerificationCodeSave.toEntity(email, code))
                     );
 
-            return email + " 로 인증번호가 정상적으로 발송되었습니다.";
+            return email + "로 인증번호가 정상적으로 발송되었습니다.";
         } catch (Exception e) {
             throw new RuntimeException("메일 전송 실패", e);
         }
     }
 
+    @Transactional
+    public Boolean checkVaricationCode(VerificationCodeCheckRequest verificationCodeCheckRequest) {
+
+        EmailCheckEntity emailCheckEntity = emailCheckRepository.findByEmail(verificationCodeCheckRequest.getEmail())
+                .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND, "요청하신 Email로 보낸 인증번호가 확인되지 않습니다."));
+
+        LocalDateTime now = LocalDateTime.now();
+        if (emailCheckEntity.getUpdatedAt().plusSeconds(180).isBefore(now)) {
+            throw new ErrorException(ResponseCode.VERIFICATION_CODE_EXPIRED, "인증번호 유효시간(3분)이 초과되었습니다.");
+        }
+
+        emailCheckEntity.setVerified(emailCheckEntity.getVerificationCode()
+                .equals(verificationCodeCheckRequest.getVerificationCode()));
+
+       return emailCheckEntity.getVerified();
+    }
 }

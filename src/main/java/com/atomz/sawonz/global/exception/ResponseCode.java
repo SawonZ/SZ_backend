@@ -32,6 +32,10 @@ public enum ResponseCode {
     FORBIDDEN(HttpStatus.FORBIDDEN, "접근권한이 없습니다"),
     // 404
     NOT_FOUND(HttpStatus.NOT_FOUND, "요청값을 찾을 수 없습니다"),
+
+    // 410 GONE
+    VERIFICATION_CODE_EXPIRED(HttpStatus.GONE, "인증번호 유효시간(3분)이 만료되었습니다"),
+
     // 500
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 오류가 발생했습니다");
 

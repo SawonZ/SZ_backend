@@ -35,4 +35,16 @@ public class EmailCheckDto {
         }
     }
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class VerificationCodeCheckRequest {
+
+        private String email;
+        private String verificationCode;
+
+    }
+
 }
