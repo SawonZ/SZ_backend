@@ -1,34 +1,46 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
 
-# 애플리케이션 JAR 위치
 APP_DIR="/home/ubuntu/app"
+JAR="$APP_DIR/sawonz-backend.jar"
 
-JAR="$APP_DIR/sawonz-backend.jar"   # 실행할 JAR 파일 경로(배포 시 appspec.yml에서 복사됨)
-LOG_DIR="/home/ubuntu/logs"         # 표준 출력/에러 로그 저장 디렉터리
-RUN_DIR="/home/ubuntu/run"          # PID 파일(프로세스 ID) 저장 디렉터리
-PID_FILE="$RUN_DIR/app.pid"         # 현재 실행 중인 프로세스의 PID를 기록할 파일
+LOG_DIR="/home/ubuntu/logs"
+RUN_DIR="/home/ubuntu/run"
+PID_FILE="$RUN_DIR/app.pid"
 
-# 로그/런타임 디렉터리 보장(없으면 생성)
+PORT="${SERVER_PORT:-8080}"                 # 필요 시 환경변수로 바꿔 사용
+PROFILE="${SPRING_PROFILES_ACTIVE:-private}"# default: private
+TIMEZONE="${APP_TZ:-Asia/Seoul}"            # 한국 시간대
+
 mkdir -p "$LOG_DIR" "$RUN_DIR"
+cd "$APP_DIR"
 
-# PID 파일이 존재하고, 그 PID가 실제로 실행 중이면(중복 기동 방지)
-if [ -f "$PID_FILE" ] && ps -p "$(cat "$PID_FILE")" >/dev/null 2>&1; then
-  # 이미 실행 중이므로 재기동하지 않고 정상 종료
-  echo "already running"; exit 0
+# 혹시 남아있을 포트 점유 선제 정리(이중 안전장치)
+if command -v lsof >/dev/null 2>&1; then
+  PORT_PIDS=$(lsof -t -i:"$PORT" || true)
+  if [ -n "${PORT_PIDS:-}" ]; then
+    kill -15 $PORT_PIDS || true
+    sleep 3
+    for p in $PORT_PIDS; do ps -p "$p" >/dev/null 2>&1 && kill -9 "$p" || true; done
+  fi
 fi
 
-# 외부 설정을 확실히 읽게 함
-cd "$APP_DIR"
+# JAR 존재 확인
+if [ ! -f "$JAR" ]; then
+  echo "JAR not found: $JAR"
+  exit 1
+fi
+
+# 외부 설정 경로 반영(이 줄이 기존엔 적용되지 않았습니다)
 EXTRA_CFG="--spring.config.additional-location=file:/home/ubuntu/app/"
+JAVA_OPTS="-Duser.timezone=${TIMEZONE}"
+SPRING_OPTS="--spring.profiles.active=${PROFILE} --server.port=${PORT}"
 
-# 백그라운드로 JAR 실행
-# - nohup: 터미널 종료(SIGHUP)에도 프로세스가 계속 실행되도록 함
-# - 표준출력/표준에러를 app.out으로 리다이렉트(2>&1: 에러도 합침)
-# - &: 백그라운드 실행
-nohup java -jar "$JAR" > "$LOG_DIR/app.out" 2>&1 &
+# 기존 로그 보존하고 신규 로그로 append
+touch "$LOG_DIR/app.out"
 
-# $!: 바로 직전에 백그라운드로 실행한 프로세스의 PID
-# PID 파일에 기록하여 stop 훅에서 참조 가능하게 함
+# 백그라운드 기동
+nohup java $JAVA_OPTS -jar "$JAR" $EXTRA_CFG $SPRING_OPTS >> "$LOG_DIR/app.out" 2>&1 &
+
+# PID 저장
 echo $! > "$PID_FILE"
