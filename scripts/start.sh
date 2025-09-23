@@ -8,9 +8,9 @@ LOG_DIR="/home/ubuntu/logs"
 RUN_DIR="/home/ubuntu/run"
 PID_FILE="$RUN_DIR/app.pid"
 
-PORT="${SERVER_PORT:-8080}"                 # 필요 시 환경변수로 바꿔 사용
-PROFILE="${SPRING_PROFILES_ACTIVE:-private}"# default: private
-TIMEZONE="${APP_TZ:-Asia/Seoul}"            # 한국 시간대
+PORT="${SERVER_PORT:-8080}"
+PROFILE="${SPRING_PROFILES_ACTIVE:-private}"
+TIMEZONE="${APP_TZ:-Asia/Seoul}"
 
 mkdir -p "$LOG_DIR" "$RUN_DIR"
 cd "$APP_DIR"
