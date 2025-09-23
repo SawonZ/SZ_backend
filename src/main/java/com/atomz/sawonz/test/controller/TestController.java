@@ -29,4 +29,12 @@ public class TestController {
     public List<TestResponse> testList(){
         return testService.testList();
     }
+
+    @GetMapping("/email")
+    public String emailTest() {
+        String code = "123456";
+        String to = "enthchal@gmail.com";
+        testService.sendVerificationCode(to, code);
+        return "메일 발송 완료";
+    }
 }

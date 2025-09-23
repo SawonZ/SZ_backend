@@ -1,0 +1,40 @@
+package com.atomz.sawonz.global.exception;
+
+import lombok.*;
+import org.springframework.http.HttpStatus;
+
+@Getter
+@AllArgsConstructor
+public enum ResponseCode {
+
+    /**
+     * Internal Server Error : 500
+     * UNAUTHORIZED : 401
+     * FORBIDDEN : 403
+     * NOT_FOUND : 404
+     * BAD_REQUEST : 400
+     */
+
+    /**
+     * 공통 성공 코드
+     */
+    // 200
+    SUCCESS(HttpStatus.OK, "요청 성공"),
+
+    /**
+     * 공통 에러 코드
+     */
+    // 400
+    BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다"),
+    // 401
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "토큰이 없습니다"),
+    // 403
+    FORBIDDEN(HttpStatus.FORBIDDEN, "접근권한이 없습니다"),
+    // 404
+    NOT_FOUND(HttpStatus.NOT_FOUND, "요청값을 찾을 수 없습니다"),
+    // 500
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 오류가 발생했습니다");
+
+    private final HttpStatus status;
+    private final String description;
+}
