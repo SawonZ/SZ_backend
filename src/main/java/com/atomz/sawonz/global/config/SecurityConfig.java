@@ -35,7 +35,8 @@ public class SecurityConfig {
         cfg.setAllowedOrigins(Arrays.asList(
                 "https://sz-frontend-eight.vercel.app",
                 "https://sawonz.world",
-                "https://www.sawonz.world"
+                "https://www.sawonz.world",
+                "https://sz-frontend-two.vercel.app/"
         ));
         cfg.setAllowCredentials(true);
         cfg.setAllowedMethods(Arrays.asList("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
