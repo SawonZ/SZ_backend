@@ -1,6 +1,7 @@
 package com.atomz.sawonz.domain.user.dto;
 
 import com.atomz.sawonz.domain.user.entity.EmailCheckEntity;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 
 public class EmailCheckDto {
@@ -12,6 +13,7 @@ public class EmailCheckDto {
     @Builder
     public static class EmailSendRequest {
 
+        @Email
         private String email;
 
     }
@@ -42,6 +44,7 @@ public class EmailCheckDto {
     @Builder
     public static class VerificationCodeCheckRequest {
 
+        @Email
         private String email;
         private String verificationCode;
 
