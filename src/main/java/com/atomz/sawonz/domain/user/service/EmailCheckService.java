@@ -4,25 +4,25 @@ import com.atomz.sawonz.domain.user.dto.EmailCheckDto.VerificationCodeCheckReque
 import com.atomz.sawonz.domain.user.dto.EmailCheckDto.VerificationCodeSave;
 import com.atomz.sawonz.domain.user.entity.EmailCheckEntity;
 import com.atomz.sawonz.domain.user.repository.EmailCheckRepository;
+import com.atomz.sawonz.domain.user.repository.UsersRepository;
 import com.atomz.sawonz.global.exception.ErrorException;
 import com.atomz.sawonz.global.exception.ResponseCode;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
 
 @Service
 @RequiredArgsConstructor
 public class EmailCheckService {
 
     private final EmailCheckRepository emailCheckRepository;
+    private final UsersRepository usersRepository;
     private final JavaMailSender mailSender;
 
     private static final SecureRandom RANDOM = new SecureRandom();
@@ -34,6 +34,10 @@ public class EmailCheckService {
 
     @Transactional
     public String sendVerificationCode(String email) {
+        // 이메일 사용 여부 확인
+        if (usersRepository.existsByEmail(email)) {
+            throw new ErrorException(ResponseCode.EMAIL_ALREADY_EXISTS);
+        }
         try {
             String code = generate6DigitCode();
 
