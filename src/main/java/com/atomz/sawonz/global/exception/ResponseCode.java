@@ -31,7 +31,7 @@ public enum ResponseCode {
     // 401
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "토큰이 없습니다"),
     WRONG_EMAIL_PASSWORD(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다."),
-    TOKEN_INVALID(org.springframework.http.HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다"),
+    TOKEN_INVALID(org.springframework.http.HttpStatus.UNAUTHORIZED, "토큰이 없거나, 유효하지 않은 토큰입니다"),
     TOKEN_EXPIRED(org.springframework.http.HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다"),
     TOKEN_SUBJECT_MISSING(org.springframework.http.HttpStatus.UNAUTHORIZED, "토큰에 subject 정보가 없습니다"),
     TOKEN_ROLE_MISSING(org.springframework.http.HttpStatus.UNAUTHORIZED, "토큰에 role 정보가 없습니다"),

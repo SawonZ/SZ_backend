@@ -1,12 +1,15 @@
 package com.atomz.sawonz.global.security;
 
-import com.atomz.sawonz.global.util.CookieUtil;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
@@ -16,14 +19,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws java.io.IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
+            throws ServletException, IOException {
 
-        String accessToken = CookieUtil.getCookieValue(request, "AT");
-        if (StringUtils.hasText(accessToken) && jwtTokenProvider.validate(accessToken)) {
-            var auth = jwtTokenProvider.parseAuthentication(accessToken);
+        String token = resolveToken(req); // Authorization → Cookie(AT) 순
+
+        if (token != null && jwtTokenProvider.validate(token)) {
+            UsernamePasswordAuthenticationToken auth = jwtTokenProvider.parseAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
-        chain.doFilter(request, response);
+
+        chain.doFilter(req, res);
+    }
+
+    private String resolveToken(HttpServletRequest req) {
+        String authz = req.getHeader("Authorization");
+        if (authz != null && authz.startsWith("Bearer ")) {
+            return authz.substring(7);
+        }
+        if (req.getCookies() != null) {
+            for (Cookie c : req.getCookies()) {
+                if ("AT".equals(c.getName())) {
+                    return c.getValue();
+                }
+            }
+        }
+        return null;
     }
 }

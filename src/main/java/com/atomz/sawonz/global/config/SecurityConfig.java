@@ -36,7 +36,8 @@ public class SecurityConfig {
                         .requestMatchers("/email/**").permitAll()
 
                         // 인증 전 단계(API 스펙에 맞게 조정)
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/me").authenticated()
 
                         // 회원가입만 공개 (users는 나머지 인증 필요)
                         .requestMatchers("/users/**").permitAll()

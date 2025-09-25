@@ -1,11 +1,13 @@
 package com.atomz.sawonz.domain.user.service;
 
 import com.atomz.sawonz.domain.user.dto.AuthDto.LoginRequest;
+import com.atomz.sawonz.domain.user.dto.AuthDto.MeResponse;
 import com.atomz.sawonz.domain.user.dto.AuthDto.TokenPair;
 import com.atomz.sawonz.domain.user.entity.UsersEntity;
 import com.atomz.sawonz.domain.user.repository.UsersRepository;
 import com.atomz.sawonz.global.exception.ErrorException;
 import com.atomz.sawonz.global.exception.ResponseCode;
+import com.atomz.sawonz.global.security.CustomUserPrincipal;
 import com.atomz.sawonz.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,9 +37,15 @@ public class AuthService {
 
         String role = user.getRole().name();
 
-        String at = jwtTokenProvider.generateAccessToken(user.getEmail(), role);
-        String rt = jwtTokenProvider.generateRefreshToken(user.getEmail(), role);
+        String at = jwtTokenProvider.generateAccessToken(user.getEmail(), role, user.getUserName());
+        String rt = jwtTokenProvider.generateRefreshToken(user.getEmail(), role, user.getUserName());
 
         return new TokenPair(at, rt, user.getEmail(), role);
+    }
+
+    public MeResponse me(CustomUserPrincipal principal) {
+
+        return MeResponse.fromPrincipal(principal);
+
     }
 }

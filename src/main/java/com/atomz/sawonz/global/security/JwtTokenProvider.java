@@ -35,19 +35,20 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
-    public String generateAccessToken(String subjectEmail, String role) {
+    public String generateAccessToken(String subjectEmail, String role, String userName) {
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(accessExpMin * 60);
         return Jwts.builder()
                 .setSubject(normalizeEmail(subjectEmail))
                 .claim("role", role)
+                .claim("userName", userName)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(exp))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String generateRefreshToken(String subjectEmail, String role) {
+    public String generateRefreshToken(String subjectEmail, String role, String userName) {
         // 역할 변화에 즉시 반영하려면 RT에는 roles를 넣지 말고 DB조회/토큰버전검증을 하세요.
         // 여기서는 DB 미조회 요구에 맞춰 roles를 함께 넣습니다.
         Instant now = Instant.now();
@@ -55,6 +56,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setSubject(normalizeEmail(subjectEmail))
                 .claim("role", role)
+                .claim("userName", userName)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(exp))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -71,29 +73,23 @@ public class JwtTokenProvider {
     }
 
     public UsernamePasswordAuthenticationToken parseAuthentication(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        Claims c = Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token).getBody();
 
-        String email = claims.getSubject();
-        String role = claims.get("role", String.class);
+        String email = c.getSubject();
+        String role  = c.get("role", String.class);
+        String userName = Optional.ofNullable(c.get("userName", String.class)).orElse(email);
 
-        if (email == null || email.isBlank()) {
-            throw new com.atomz.sawonz.global.exception.ErrorException(
-                    com.atomz.sawonz.global.exception.ResponseCode.TOKEN_SUBJECT_MISSING
-            );
-        }
-        if (role == null || role.isBlank()) {
-            throw new com.atomz.sawonz.global.exception.ErrorException(
-                    com.atomz.sawonz.global.exception.ResponseCode.TOKEN_ROLE_MISSING
-            );
-        }
+        var authorities = List.of(new SimpleGrantedAuthority(role.trim()));
+        var principal = CustomUserPrincipal.builder()
+                .id(null)
+                .userName(userName)
+                .email(email)
+                .role(role.trim())
+                .authorities(authorities)
+                .build();
 
-        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role.trim()));
-
-        return new UsernamePasswordAuthenticationToken(email, null, authorities);
+        return new UsernamePasswordAuthenticationToken(principal, null, authorities);
     }
 
     private String normalizeEmail(String email) {
