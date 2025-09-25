@@ -1,6 +1,8 @@
 package com.atomz.sawonz.domain.user.entity;
 
 import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
@@ -39,4 +41,19 @@ public class UsersEntity {
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private UserProfileEntity userProfileEntity;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    @Builder.Default
+    private Role role = Role.ROLE_MEMBER;
+
+    @PrePersist
+    private void ensureDefaults() {
+        if (role == null) role = Role.ROLE_MEMBER;
+        if (status == null) status = false;
+    }
+
+    public enum Role {
+        ROLE_MEMBER, ROLE_MANAGER, ROLE_ADMIN
+    }
 }

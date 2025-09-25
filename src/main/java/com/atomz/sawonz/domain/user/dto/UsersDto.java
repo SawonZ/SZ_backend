@@ -43,7 +43,6 @@ public class UsersDto {
                     .email(signupRequest.getEmail())
                     .phone(signupRequest.getPhone())
                     .passwordHash(passwordHash)
-                    .status(false)
                     .build();
         }
     }
@@ -63,5 +62,4 @@ public class UsersDto {
                     .build();
         }
     }
-
 }

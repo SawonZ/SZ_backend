@@ -47,6 +47,15 @@ jobs:
           spring.mail.properties.mail.smtp.auth=true
           spring.mail.properties.mail.smtp.starttls.enable=true
           spring.mail.default-encoding=UTF-8
+          
+          app.jwt.secret=${{ secrets.JWT_SECRET }}
+          app.jwt.access-exp-min=60
+          app.jwt.refresh-exp-min=720
+               
+          app.cookie.domain=${{ COOKIE_DOMAIN }}
+          app.cookie.secure=true
+          app.cookie.same-site=None
+          app.cookie.path=/
           EOF
 
       - name: Prepare bundle
