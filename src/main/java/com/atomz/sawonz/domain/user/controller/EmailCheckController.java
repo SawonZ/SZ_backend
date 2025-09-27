@@ -20,8 +20,10 @@ public class EmailCheckController {
 
     @PostMapping("/send-code")
     public HttpCustomResponse<String> sendCode(@RequestBody EmailSendRequest emailSendRequest) {
-        String msg = emailCheckService.sendVerificationCode(emailSendRequest.getEmail().trim().toLowerCase());
-        return new HttpCustomResponse<>(ResponseCode.SUCCESS, msg);
+        return new HttpCustomResponse<>(
+                ResponseCode.SUCCESS,
+                emailCheckService.sendVerificationCode(emailSendRequest.getEmail().trim().toLowerCase())
+        );
     }
 
     @PostMapping("/check-code")

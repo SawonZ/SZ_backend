@@ -42,7 +42,7 @@ public enum ResponseCode {
 
     // 404
     NOT_FOUND(HttpStatus.NOT_FOUND, "요청값을 찾을 수 없습니다"),
-    NOT_FOUND_USER(HttpStatus.NOT_FOUND, "요청 사용자의 정보가 없습니다."),
+    NOT_FOUND_USER(HttpStatus.NOT_FOUND, "요청한 사용자의 정보가 없습니다."),
 
     // 409
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다"),
