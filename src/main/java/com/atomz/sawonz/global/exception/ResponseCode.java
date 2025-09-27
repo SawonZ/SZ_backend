@@ -35,6 +35,7 @@ public enum ResponseCode {
     TOKEN_EXPIRED(org.springframework.http.HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다"),
     TOKEN_SUBJECT_MISSING(org.springframework.http.HttpStatus.UNAUTHORIZED, "토큰에 subject 정보가 없습니다"),
     TOKEN_ROLE_MISSING(org.springframework.http.HttpStatus.UNAUTHORIZED, "토큰에 role 정보가 없습니다"),
+    NOT_ADMIN_MANAGER(HttpStatus.UNAUTHORIZED, "요청권한이 없습니다."),
 
     // 403
     FORBIDDEN(HttpStatus.FORBIDDEN, "접근권한이 없습니다"),

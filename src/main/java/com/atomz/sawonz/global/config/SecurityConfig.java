@@ -1,8 +1,10 @@
 package com.atomz.sawonz.global.config;
 
 import com.atomz.sawonz.global.security.JwtAuthenticationFilter;
+import com.atomz.sawonz.global.security.RestAccessDeniedHandler;
 import com.atomz.sawonz.global.security.RestAuthenticationEntryPoint;
-import jakarta.servlet.http.HttpServletResponse;
+import java.time.Duration;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,9 +20,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.time.Duration;
-import java.util.Arrays;
-
 @Configuration
 @EnableMethodSecurity
 @RequiredArgsConstructor
@@ -28,6 +27,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+    private final RestAccessDeniedHandler restAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -62,6 +62,7 @@ public class SecurityConfig {
                 // 미인증 접근시 401로 응답
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(restAuthenticationEntryPoint)
+                        .accessDeniedHandler(restAccessDeniedHandler)
                 )
                 // JWT 필터 연결
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
