@@ -20,7 +20,7 @@ public class AdminService {
         UsersEntity user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_USER));
 
-        if (!user.getStatus()) {
+        if (user.getStatus()) {
             throw new ErrorException(ResponseCode.BAD_REQUEST, "이미 승인된 사용자입니다.");
         }
 
