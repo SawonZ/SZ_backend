@@ -9,15 +9,11 @@ import com.atomz.sawonz.global.exception.ResponseCode;
 import com.atomz.sawonz.global.security.CustomUserPrincipal;
 import com.atomz.sawonz.global.util.CookieUtil;
 import jakarta.validation.Valid;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,12 +30,6 @@ public class AuthController {
     private final AuthService authService;
     private final CookieUtil cookieUtil;
 
-    @Value("${app.jwt.access-exp-min}")
-    private long accessExpMin;
-
-    @Value("${app.jwt.refresh-exp-min}")
-    private long refreshExpMin;
-
     @PostMapping("/login")
     public ResponseEntity<HttpCustomResponse<Void>> login(
             @Valid @RequestBody LoginRequest loginRequest
@@ -47,12 +37,8 @@ public class AuthController {
 
         var tokens = authService.login(loginRequest);
 
-        // (A안) 설정값 기준으로 쿠키 수명 지정
-        long atMaxAgeSec = accessExpMin * 60;
-        long rtMaxAgeSec = refreshExpMin * 60;
-
-        ResponseCookie atCookie = cookieUtil.buildHttpOnlyCookie("AT", tokens.getAccessToken(), atMaxAgeSec);
-        ResponseCookie rtCookie = cookieUtil.buildHttpOnlyCookie("RT", tokens.getRefreshToken(), rtMaxAgeSec);
+        ResponseCookie atCookie = cookieUtil.buildAt("AT", tokens.getAccessToken());
+        ResponseCookie rtCookie = cookieUtil.buildRt("RT", tokens.getRefreshToken());
 
         HttpCustomResponse<Void> body =
                 new HttpCustomResponse<>(ResponseCode.SUCCESS, "로그인 성공");
@@ -60,6 +46,19 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, atCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, rtCookie.toString())
+                .body(body);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<HttpCustomResponse<Void>> logout() {
+        ResponseCookie clearAT = cookieUtil.clearCookie("AT");
+        ResponseCookie clearRT = cookieUtil.clearCookie("RT");
+
+        HttpCustomResponse<Void> body = new HttpCustomResponse<>(ResponseCode.SUCCESS, "로그아웃 완료");
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, clearAT.toString())
+                .header(HttpHeaders.SET_COOKIE, clearRT.toString())
                 .body(body);
     }
 

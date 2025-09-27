@@ -1,8 +1,6 @@
 package com.atomz.sawonz.domain.user.entity;
 
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
@@ -40,7 +38,7 @@ public class UsersEntity {
     private LocalDateTime createdAt;
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private UserProfileEntity userProfileEntity;
+    private UserPrivateEntity userPrivate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)

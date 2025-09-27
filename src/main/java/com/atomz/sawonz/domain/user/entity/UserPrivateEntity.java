@@ -9,8 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user_profiles")
-public class UserProfileEntity {
+@Table(name = "user_private")
+public class UserPrivateEntity {
 
     @Id
     @Column(name = "user_id")
@@ -21,7 +21,7 @@ public class UserProfileEntity {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private UsersEntity user;
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "address", nullable = false)               // 주소
     private String address;
 
     @Column(name = "salary", nullable = false)                // 연봉

@@ -12,21 +12,47 @@ public class CookieUtil {
 
     @Value("${app.cookie.domain}")
     private String domain;
+
     @Value("${app.cookie.secure}")
     private boolean secure;
+
     @Value("${app.cookie.same-site}")
     private String sameSite;
+
     @Value("${app.cookie.path:/}")
     private String path;
 
-    public ResponseCookie buildHttpOnlyCookie(String name, String value, long maxAgeSeconds) {
+    @Value("${app.jwt.access-exp-min}")
+    private long accessExpMin;
+
+    @Value("${app.jwt.refresh-exp-min}")
+    private long refreshExpMin;
+
+    public ResponseCookie buildAt(String name, String value) {
+
+        long atMaxAgeSec = accessExpMin * 60;
+
         return ResponseCookie.from(name, value)
                 .httpOnly(true)
                 .secure(secure)
                 .sameSite(sameSite) // "None", "Lax", "Strict"
                 .domain(domain)
                 .path(path)
-                .maxAge(maxAgeSeconds)
+                .maxAge(atMaxAgeSec)
+                .build();
+    }
+
+    public ResponseCookie buildRt(String name, String value) {
+
+        long rtMaxAgeSec = refreshExpMin * 60;
+
+        return ResponseCookie.from(name, value)
+                .httpOnly(true)
+                .secure(secure)
+                .sameSite(sameSite) // "None", "Lax", "Strict"
+                .domain(domain)
+                .path(path)
+                .maxAge(rtMaxAgeSec)
                 .build();
     }
 

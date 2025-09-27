@@ -3,8 +3,7 @@ package com.atomz.sawonz.domain.user.service;
 import com.atomz.sawonz.domain.user.dto.UsersDto;
 import com.atomz.sawonz.domain.user.dto.UsersDto.SignupRequest;
 import com.atomz.sawonz.domain.user.dto.UsersDto.SignupResponse;
-import com.atomz.sawonz.domain.user.entity.EmailCheckEntity;
-import com.atomz.sawonz.domain.user.entity.UserProfileEntity;
+import com.atomz.sawonz.domain.user.entity.UserPrivateEntity;
 import com.atomz.sawonz.domain.user.entity.UsersEntity;
 import com.atomz.sawonz.domain.user.repository.EmailCheckRepository;
 import com.atomz.sawonz.domain.user.repository.UserProfileRepository;
@@ -45,7 +44,7 @@ public class UsersService {
                 signupRequest, passwordEncoder.encode(signupRequest.getPassword())));
 
         // 가입 직후 프로필 빈값으로 생성
-        UserProfileEntity profile = UserProfileEntity.builder()
+        UserPrivateEntity profile = UserPrivateEntity.builder()
                 .user(usersEntity)
                 .address("")
                 .salary("")
