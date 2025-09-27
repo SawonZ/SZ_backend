@@ -1,6 +1,7 @@
 package com.atomz.sawonz.domain.user.service;
 
 import com.atomz.sawonz.domain.user.dto.UsersDto;
+import com.atomz.sawonz.domain.user.dto.UsersDto.MyInfoResponse;
 import com.atomz.sawonz.domain.user.dto.UsersDto.SignupRequest;
 import com.atomz.sawonz.domain.user.dto.UsersDto.SignupResponse;
 import com.atomz.sawonz.domain.user.entity.UserPrivateEntity;
@@ -25,7 +26,7 @@ public class UsersService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UsersDto.SignupResponse signup(SignupRequest signupRequest) {
+    public SignupResponse signup(SignupRequest signupRequest) {
 
         // 이메일 검증 여부 확인
         if (!emailCheckRepository.existsByEmailAndVerifiedTrue(signupRequest.getEmail())) {
@@ -47,14 +48,23 @@ public class UsersService {
         UserPrivateEntity profile = UserPrivateEntity.builder()
                 .user(usersEntity)
                 .address("")
-                .salary("")
-                .annualLeaveCount("")
-                .positionTitle("")
-                .hiredAt("")
-                .resignedAt("")
+                .salary(0)
+                .annualLeaveCount(0)
+                .positionTitle("사원")
+                .hiredAt(null)
+                .resignedAt(null)
                 .build();
         userProfileRepository.save(profile);
 
         return SignupResponse.fromEntity(usersEntity);
+    }
+
+    @Transactional
+    public MyInfoResponse myInfo(String email) {
+
+        UsersEntity user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_USER));
+
+        return MyInfoResponse.fromEntity(user);
     }
 }

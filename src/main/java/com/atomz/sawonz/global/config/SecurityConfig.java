@@ -1,6 +1,7 @@
 package com.atomz.sawonz.global.config;
 
 import com.atomz.sawonz.global.security.JwtAuthenticationFilter;
+import com.atomz.sawonz.global.security.RestAuthenticationEntryPoint;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,7 +42,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/me").authenticated()
 
                         // 회원가입만 공개 (users는 나머지 인증 필요)
-                        .requestMatchers("/users/**").permitAll()
+                        .requestMatchers("/users/signup").permitAll()
+                        .requestMatchers("/users/**").authenticated()
 
                         // CORS 프리플라이트
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -52,9 +55,9 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 // 미인증 접근시 401로 응답
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(
-                        (req, res, e) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED)
-                ))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(restAuthenticationEntryPoint)
+                )
                 // JWT 필터 연결
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

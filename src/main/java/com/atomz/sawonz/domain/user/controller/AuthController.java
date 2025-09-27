@@ -66,22 +66,11 @@ public class AuthController {
     public ResponseEntity<HttpCustomResponse<MeResponse>> me(
             @AuthenticationPrincipal CustomUserPrincipal principal
     ) {
-
         if (principal == null) {
             throw new ErrorException(ResponseCode.TOKEN_INVALID);
         }
-
-        // 요청별 principal 로깅
-        log.info("[/auth/me] principal - id={}, email={}, userName={}, role={}",
-                principal.getId(),
-                principal.getEmail(),
-                principal.getUsername(),
-                principal.getRole()
-        );
-
         return ResponseEntity.ok(
                 new HttpCustomResponse<>(ResponseCode.SUCCESS, authService.me(principal))
         );
     }
-
 }

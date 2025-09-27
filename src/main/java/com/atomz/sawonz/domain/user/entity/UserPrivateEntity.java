@@ -1,6 +1,7 @@
 package com.atomz.sawonz.domain.user.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import lombok.*;
 
 @Getter
@@ -25,17 +26,17 @@ public class UserPrivateEntity {
     private String address;
 
     @Column(name = "salary", nullable = false)                // 연봉
-    private String salary;
+    private Integer salary;
 
     @Column(name = "annualLeaveCount", nullable = false)      // 연차(연간 휴가 개수)
-    private String annualLeaveCount;
+    private Integer annualLeaveCount;
 
     @Column(name = "positionTitle", nullable = false)         // 직급
     private String positionTitle;
 
-    @Column(name = "hiredAt", nullable = false)               // 입사일
-    private String hiredAt;
+    @Column(name = "hiredAt")               // 입사일
+    private LocalDate hiredAt;
 
-    @Column(name = "resignedAt", nullable = false)            // 퇴사일
-    private String resignedAt;
+    @Column(name = "resignedAt")            // 퇴사일
+    private LocalDate resignedAt;
 }

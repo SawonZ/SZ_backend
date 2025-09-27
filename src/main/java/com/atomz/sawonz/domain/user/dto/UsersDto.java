@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDate;
 import lombok.*;
 
 public class UsersDto {
@@ -61,5 +62,38 @@ public class UsersDto {
                     .email(usersEntity.getEmail())
                     .build();
         }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class MyInfoResponse {
+
+        private String userName;
+        private String email;
+        private String phone;
+        private String address;
+        private Integer salary;
+        private Integer annualLeaveCount;
+        private String positionTitle;
+        private LocalDate hiredAt;
+        private LocalDate resignedAt;
+
+        public static MyInfoResponse fromEntity(UsersEntity usersEntity) {
+            return MyInfoResponse.builder()
+                    .userName(usersEntity.getUserName())
+                    .email(usersEntity.getEmail())
+                    .phone(usersEntity.getPhone())
+                    .address(usersEntity.getUserPrivate().getAddress())
+                    .salary(usersEntity.getUserPrivate().getSalary())
+                    .annualLeaveCount(usersEntity.getUserPrivate().getAnnualLeaveCount())
+                    .positionTitle(usersEntity.getUserPrivate().getPositionTitle())
+                    .hiredAt(usersEntity.getUserPrivate().getHiredAt())
+                    .resignedAt(usersEntity.getUserPrivate().getResignedAt())
+                    .build();
+        }
+
     }
 }
