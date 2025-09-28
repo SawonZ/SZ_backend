@@ -1,16 +1,18 @@
 package com.atomz.sawonz.domain.user.service;
 
-import com.atomz.sawonz.domain.user.dto.UsersDto;
+import com.atomz.sawonz.domain.user.dto.UsersDto.MyCoworkerInfoResponse;
 import com.atomz.sawonz.domain.user.dto.UsersDto.MyInfoResponse;
 import com.atomz.sawonz.domain.user.dto.UsersDto.SignupRequest;
 import com.atomz.sawonz.domain.user.dto.UsersDto.SignupResponse;
 import com.atomz.sawonz.domain.user.entity.UserPrivateEntity;
 import com.atomz.sawonz.domain.user.entity.UsersEntity;
 import com.atomz.sawonz.domain.user.repository.EmailCheckRepository;
-import com.atomz.sawonz.domain.user.repository.UserProfileRepository;
+import com.atomz.sawonz.domain.user.repository.UserPrivateRepository;
 import com.atomz.sawonz.domain.user.repository.UsersRepository;
 import com.atomz.sawonz.global.exception.ErrorException;
 import com.atomz.sawonz.global.exception.ResponseCode;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UsersService {
 
     private final UsersRepository usersRepository;
-    private final UserProfileRepository userProfileRepository;
+    private final UserPrivateRepository userPrivateRepository;
     private final EmailCheckRepository emailCheckRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -54,7 +56,7 @@ public class UsersService {
                 .hiredAt(null)
                 .resignedAt(null)
                 .build();
-        userProfileRepository.save(profile);
+        userPrivateRepository.save(profile);
 
         return SignupResponse.fromEntity(usersEntity);
     }
@@ -66,5 +68,20 @@ public class UsersService {
                 .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_USER));
 
         return MyInfoResponse.fromEntity(user);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MyCoworkerInfoResponse> coworkerList(){
+
+        List<UsersEntity> users = usersRepository.findAll();
+
+        List<MyCoworkerInfoResponse> myCoworkerInfoResponseList = new ArrayList<>();
+
+        for (UsersEntity user : users) {
+            MyCoworkerInfoResponse myCoworkerInfoResponse = MyCoworkerInfoResponse.fromEntity(user);
+            myCoworkerInfoResponseList.add(myCoworkerInfoResponse);
+        }
+
+        return myCoworkerInfoResponseList;
     }
 }

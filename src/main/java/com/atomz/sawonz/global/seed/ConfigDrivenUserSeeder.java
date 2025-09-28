@@ -1,7 +1,9 @@
 package com.atomz.sawonz.global.seed;
 
+import com.atomz.sawonz.domain.user.entity.UserPrivateEntity;
 import com.atomz.sawonz.domain.user.entity.UsersEntity;
 import com.atomz.sawonz.domain.user.entity.UsersEntity.Role;
+import com.atomz.sawonz.domain.user.repository.UserPrivateRepository;
 import com.atomz.sawonz.domain.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 public class ConfigDrivenUserSeeder implements CommandLineRunner {
 
     private final UsersRepository usersRepository;
+    private final UserPrivateRepository userPrivateRepository;
     private final PasswordEncoder passwordEncoder;
     private final SeedProperties props;
 
@@ -37,7 +40,7 @@ public class ConfigDrivenUserSeeder implements CommandLineRunner {
 
         Role role = parseRoleOrDefault(su.getRole(), Role.ROLE_MEMBER);
 
-        UsersEntity user = UsersEntity.builder()
+        UsersEntity usersEntity = UsersEntity.builder()
                 .email(su.getEmail())
                 .passwordHash(passwordEncoder.encode(su.getPassword()))
                 .userName(su.getName())
@@ -46,7 +49,19 @@ public class ConfigDrivenUserSeeder implements CommandLineRunner {
                 .role(role)                   // 단일 Role 필드에 직접 세팅
                 .build();
 
-        usersRepository.save(user);
+        UserPrivateEntity userPrivateEntity = UserPrivateEntity.builder()
+                .user(usersEntity)
+                .address("")
+                .salary(0)
+                .annualLeaveCount(0)
+                .positionTitle(su.getPositionTitle())
+                .hiredAt(null)
+                .resignedAt(null)
+                .build();
+        usersEntity.setUserPrivate(userPrivateEntity);
+
+        usersRepository.save(usersEntity);
+
         log.info("[UserSeed] created -> {} ({})", su.getEmail(), role);
     }
 

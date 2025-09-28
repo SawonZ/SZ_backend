@@ -18,7 +18,8 @@ public class SeedProperties {
     public static class SeedUser {
         private String email;
         private String name;
-        private String role;     // 예: ROLE_ADMIN / ROLE_MEMBER / ROLE_SUPPORT
-        private String password; // 평문 -> 런타임에서 인코딩
+        private String role;
+        private String password;
+        private String positionTitle;
     }
 }

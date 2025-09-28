@@ -94,6 +94,28 @@ public class UsersDto {
                     .resignedAt(usersEntity.getUserPrivate().getResignedAt())
                     .build();
         }
-
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class MyCoworkerInfoResponse {
+
+        private String userName;
+        private String email;
+        private String phone;
+        private String positionTitle;
+
+        public static MyCoworkerInfoResponse fromEntity(UsersEntity usersEntity) {
+            return MyCoworkerInfoResponse.builder()
+                    .userName(usersEntity.getUserName())
+                    .email(usersEntity.getEmail())
+                    .phone(usersEntity.getPhone())
+                    .positionTitle(usersEntity.getUserPrivate().getPositionTitle())
+                    .build();
+        }
+    }
+
 }
