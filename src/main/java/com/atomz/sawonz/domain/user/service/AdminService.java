@@ -1,9 +1,12 @@
 package com.atomz.sawonz.domain.user.service;
 
+import com.atomz.sawonz.domain.user.dto.UsersDto.MyInfoResponse;
 import com.atomz.sawonz.domain.user.entity.UsersEntity;
 import com.atomz.sawonz.domain.user.repository.UsersRepository;
 import com.atomz.sawonz.global.exception.ErrorException;
 import com.atomz.sawonz.global.exception.ResponseCode;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +32,21 @@ public class AdminService {
         usersRepository.save(user);
 
         return email + " 승인 되었습니다.";
+    }
 
+    @Transactional(readOnly = true)
+    public List<MyInfoResponse> userList(){
+
+        List<UsersEntity> users = usersRepository.findAll();
+
+        List<MyInfoResponse> myInfoResponseList = new ArrayList<>();
+
+        for (UsersEntity user : users) {
+            MyInfoResponse myInfoResponse = MyInfoResponse.fromEntity(user);
+            myInfoResponseList.add(myInfoResponse);
+        }
+
+        return myInfoResponseList;
     }
 
 }

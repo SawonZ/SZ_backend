@@ -59,7 +59,7 @@ public class UsersService {
         return SignupResponse.fromEntity(usersEntity);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public MyInfoResponse myInfo(String email) {
 
         UsersEntity user = usersRepository.findByEmail(email)
