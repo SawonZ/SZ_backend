@@ -2,12 +2,14 @@ package com.atomz.sawonz.domain.user.controller;
 
 import com.atomz.sawonz.domain.user.dto.AuthDto.LoginRequest;
 import com.atomz.sawonz.domain.user.dto.AuthDto.MeResponse;
+import com.atomz.sawonz.domain.user.dto.AuthDto.TokenPair;
 import com.atomz.sawonz.domain.user.service.AuthService;
 import com.atomz.sawonz.global.exception.ErrorException;
 import com.atomz.sawonz.global.exception.HttpCustomResponse;
 import com.atomz.sawonz.global.exception.ResponseCode;
 import com.atomz.sawonz.global.security.CustomUserPrincipal;
 import com.atomz.sawonz.global.util.CookieUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +37,7 @@ public class AuthController {
             @Valid @RequestBody LoginRequest loginRequest
     ) {
 
-        var tokens = authService.login(loginRequest);
+        TokenPair tokens = authService.login(loginRequest);
 
         ResponseCookie atCookie = cookieUtil.buildAt("AT", tokens.getAccessToken());
         ResponseCookie rtCookie = cookieUtil.buildRt("RT", tokens.getRefreshToken());
@@ -72,5 +74,20 @@ public class AuthController {
         return ResponseEntity.ok(
                 new HttpCustomResponse<>(ResponseCode.SUCCESS, authService.me(principal))
         );
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<HttpCustomResponse<Void>> refresh(HttpServletRequest request) {
+
+        TokenPair pair = authService.refresh(request);
+
+        ResponseCookie atCookie = cookieUtil.buildAt("AT", pair.getAccessToken());
+
+        HttpCustomResponse<Void> body =
+                new HttpCustomResponse<>(ResponseCode.SUCCESS, "AT 토큰 Refresh 성공");
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, atCookie.toString())
+                .body(body);
     }
 }

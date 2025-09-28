@@ -92,6 +92,14 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, null, authorities);
     }
 
+    public Claims parseClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody(); // 만료면 ExpiredJwtException 발생
+    }
+
     private String normalizeEmail(String email) {
         return email == null ? null : email.trim().toLowerCase();
     }

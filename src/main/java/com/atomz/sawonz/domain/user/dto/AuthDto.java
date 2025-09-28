@@ -32,7 +32,16 @@ public class AuthDto {
         private final String accessToken;
         private final String refreshToken;
         private final String email;
-        private final String roles;
+        private final String role;
+
+        public static TokenPair of(String at, String rt, String email, String role) {
+            return TokenPair.builder()
+                    .accessToken(at)
+                    .refreshToken(rt)
+                    .email(email)
+                    .role(role)
+                    .build();
+        }
     }
 
     @Getter
@@ -54,6 +63,5 @@ public class AuthDto {
                     .build();
         }
     }
-
 
 }

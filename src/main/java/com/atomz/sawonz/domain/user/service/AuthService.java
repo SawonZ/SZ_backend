@@ -9,6 +9,10 @@ import com.atomz.sawonz.global.exception.ErrorException;
 import com.atomz.sawonz.global.exception.ResponseCode;
 import com.atomz.sawonz.global.security.CustomUserPrincipal;
 import com.atomz.sawonz.global.security.JwtTokenProvider;
+import com.atomz.sawonz.global.util.CookieUtil;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,12 +44,37 @@ public class AuthService {
         String at = jwtTokenProvider.generateAccessToken(user.getEmail(), role, user.getUserName());
         String rt = jwtTokenProvider.generateRefreshToken(user.getEmail(), role, user.getUserName());
 
-        return new TokenPair(at, rt, user.getEmail(), role);
+        return TokenPair.of(at, rt, user.getEmail(), role);
     }
 
     public MeResponse me(CustomUserPrincipal principal) {
 
         return MeResponse.fromPrincipal(principal);
+    }
 
+    public TokenPair refresh(HttpServletRequest request) {
+
+        String rt = CookieUtil.getCookieValue(request, "RT");
+        if (rt == null || rt.isBlank()) {
+            throw new ErrorException(ResponseCode.TOKEN_INVALID);
+        }
+
+        Claims claims;
+        try {
+            claims = jwtTokenProvider.parseClaims(rt); // 유효성 + 만료 확인
+        } catch (ExpiredJwtException ex) {
+            throw new ErrorException(ResponseCode.TOKEN_EXPIRED);
+        } catch (Exception ex) {
+            throw new ErrorException(ResponseCode.TOKEN_INVALID);
+        }
+
+        String email = claims.getSubject();
+        String role = claims.get("role", String.class);
+        String userName = claims.get("userName", String.class);
+
+        // RT가 유효하면 AT 새로 발급
+        String newAT = jwtTokenProvider.generateAccessToken(email, role, userName);
+
+        return TokenPair.of(newAT, null, email, role);
     }
 }
