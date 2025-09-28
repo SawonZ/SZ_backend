@@ -32,7 +32,7 @@ jobs:
           spring.application.name=sawonz
 
           spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-          spring.datasource.url=jdbc:mysql://${{ secrets.DB_ENDPOINT }}/${{ secrets.DB_NAME }}?useSSL=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+          spring.datasource.url=jdbc:mysql://${{ secrets.DB_ENDPOINT }}/${{ secrets.DB_NAME }}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul
           spring.datasource.username=${{ secrets.DB_USER }}
           spring.datasource.password=${{ secrets.DB_PASSWORD }}
 
@@ -65,16 +65,19 @@ jobs:
           app.seed.users[0].name=testadmin
           app.seed.users[0].role=ROLE_ADMIN
           app.seed.users[0].password=admin123!!
+          app.seed.users[0].positionTitle=Owner
           
           app.seed.users[1].email=test_manager@sawonz.world
           app.seed.users[1].name=testmanager
           app.seed.users[1].role=ROLE_MANAGER
           app.seed.users[1].password=manager123!!
+          app.seed.users[1].positionTitle=TeamJang
           
           app.seed.users[2].email=test_member@sawonz.world
           app.seed.users[2].name=testuser
           app.seed.users[2].role=ROLE_MEMBER
           app.seed.users[2].password=member123!!
+          app.seed.users[2].positionTitle=Sawon
           EOF
 
       - name: Prepare bundle
