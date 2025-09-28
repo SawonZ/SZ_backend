@@ -56,6 +56,25 @@ jobs:
           app.cookie.secure=true
           app.cookie.same-site=None
           app.cookie.path=/
+          
+          # 계정 등록 ON/OFF 스위치
+          app.seed.enabled=true
+          
+          # 계정 목록 (인덱스 기반)
+          app.seed.users[0].email=test_admin@sawonz.world
+          app.seed.users[0].name=testadmin
+          app.seed.users[0].role=ROLE_ADMIN
+          app.seed.users[0].password=admin123!!
+          
+          app.seed.users[1].email=test_manager@sawonz.world
+          app.seed.users[1].name=testmanager
+          app.seed.users[1].role=ROLE_MANAGER
+          app.seed.users[1].password=manager123!!
+          
+          app.seed.users[2].email=test_member@sawonz.world
+          app.seed.users[2].name=testuser
+          app.seed.users[2].role=ROLE_MEMBER
+          app.seed.users[2].password=member123!!
           EOF
 
       - name: Prepare bundle
