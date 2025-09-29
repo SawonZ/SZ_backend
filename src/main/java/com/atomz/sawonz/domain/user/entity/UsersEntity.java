@@ -24,7 +24,7 @@ public class UsersEntity {
     @Column(name = "passwordHash", nullable = false)
     private String passwordHash;
 
-    @Column(name = "phone", nullable = false, updatable = false)
+    @Column(name = "phone", nullable = false)
     private String phone;
 
     @Column(name = "email", nullable = false, updatable = false)

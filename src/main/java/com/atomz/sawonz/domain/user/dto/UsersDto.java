@@ -101,6 +101,17 @@ public class UsersDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    public static class MyInfoUpdateRequest {
+
+        private String phone;
+        private String address;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class MyCoworkerInfoResponse {
 
         private String userName;

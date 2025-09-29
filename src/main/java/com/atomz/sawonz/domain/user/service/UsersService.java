@@ -2,6 +2,7 @@ package com.atomz.sawonz.domain.user.service;
 
 import com.atomz.sawonz.domain.user.dto.UsersDto.MyCoworkerInfoResponse;
 import com.atomz.sawonz.domain.user.dto.UsersDto.MyInfoResponse;
+import com.atomz.sawonz.domain.user.dto.UsersDto.MyInfoUpdateRequest;
 import com.atomz.sawonz.domain.user.dto.UsersDto.SignupRequest;
 import com.atomz.sawonz.domain.user.dto.UsersDto.SignupResponse;
 import com.atomz.sawonz.domain.user.entity.UserPrivateEntity;
@@ -83,5 +84,29 @@ public class UsersService {
         }
 
         return myCoworkerInfoResponseList;
+    }
+
+    @Transactional
+    public MyInfoResponse updateMyInfo(String email, MyInfoUpdateRequest myInfoUpdateRequest) {
+
+        if (
+                (myInfoUpdateRequest.getPhone() == null || myInfoUpdateRequest.getPhone().isEmpty()) &&
+                        (myInfoUpdateRequest.getAddress() == null || myInfoUpdateRequest.getAddress().isEmpty())) {
+            throw new ErrorException(ResponseCode.BAD_REQUEST, "수정하려는 값이 최소 하나이상 존재해야합니다.");
+        }
+
+        UsersEntity user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_USER));
+
+        if (myInfoUpdateRequest.getPhone() != null && !myInfoUpdateRequest.getPhone().isEmpty()) {
+            user.setPhone(myInfoUpdateRequest.getPhone());
+        }
+
+        if (myInfoUpdateRequest.getAddress() != null && !myInfoUpdateRequest.getAddress().isEmpty()) {
+            UserPrivateEntity userPrivateEntity = user.getUserPrivate();
+            userPrivateEntity.setAddress(myInfoUpdateRequest.getAddress());
+        }
+
+        return MyInfoResponse.fromEntity(user);
     }
 }

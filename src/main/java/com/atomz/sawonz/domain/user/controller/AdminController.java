@@ -1,9 +1,5 @@
 package com.atomz.sawonz.domain.user.controller;
 
-import static com.atomz.sawonz.domain.user.entity.UsersEntity.Role.ROLE_ADMIN;
-import static com.atomz.sawonz.domain.user.entity.UsersEntity.Role.ROLE_MANAGER;
-import static com.atomz.sawonz.domain.user.entity.UsersEntity.Role.ROLE_MEMBER;
-
 import com.atomz.sawonz.domain.user.dto.AdminDto.UserStatusRequest;
 import com.atomz.sawonz.domain.user.dto.UsersDto.MyInfoResponse;
 import com.atomz.sawonz.domain.user.service.AdminService;

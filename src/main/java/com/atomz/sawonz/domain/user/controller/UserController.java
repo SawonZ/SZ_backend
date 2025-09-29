@@ -2,6 +2,7 @@ package com.atomz.sawonz.domain.user.controller;
 
 import com.atomz.sawonz.domain.user.dto.UsersDto.MyCoworkerInfoResponse;
 import com.atomz.sawonz.domain.user.dto.UsersDto.MyInfoResponse;
+import com.atomz.sawonz.domain.user.dto.UsersDto.MyInfoUpdateRequest;
 import com.atomz.sawonz.domain.user.dto.UsersDto.SignupRequest;
 import com.atomz.sawonz.domain.user.dto.UsersDto.SignupResponse;
 import com.atomz.sawonz.domain.user.service.UsersService;
@@ -11,8 +12,10 @@ import com.atomz.sawonz.global.exception.ResponseCode;
 import com.atomz.sawonz.global.security.CustomUserPrincipal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,13 +52,22 @@ public class UserController {
         );
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @PatchMapping("/my-info")
+    public HttpCustomResponse<MyInfoResponse> updateMyInfo(
+            @AuthenticationPrincipal CustomUserPrincipal principal,
+            @RequestBody MyInfoUpdateRequest myInfoUpdateRequest
+    ){
+
+        return new HttpCustomResponse<>(
+                ResponseCode.SUCCESS,
+                usersService.updateMyInfo(principal.getEmail(), myInfoUpdateRequest)
+        );
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/coworkers")
-    public HttpCustomResponse<List<MyCoworkerInfoResponse>> coworker(
-            @AuthenticationPrincipal CustomUserPrincipal principal
-    ) {
-        if (principal == null) {
-            throw new ErrorException(ResponseCode.TOKEN_INVALID);
-        }
+    public HttpCustomResponse<List<MyCoworkerInfoResponse>> coworker() {
 
         return new HttpCustomResponse<>(
                 ResponseCode.SUCCESS,
