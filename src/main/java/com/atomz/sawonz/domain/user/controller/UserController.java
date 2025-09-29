@@ -38,13 +38,11 @@ public class UserController {
         );
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/my-info")
     public HttpCustomResponse<MyInfoResponse> myInfo(
             @AuthenticationPrincipal CustomUserPrincipal principal
     ) {
-        if (principal == null) {
-            throw new ErrorException(ResponseCode.TOKEN_INVALID);
-        }
 
         return new HttpCustomResponse<>(
                 ResponseCode.SUCCESS,
