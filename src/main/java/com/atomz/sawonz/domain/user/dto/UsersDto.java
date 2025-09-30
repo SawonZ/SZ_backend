@@ -78,6 +78,7 @@ public class UsersDto {
         private Integer salary;
         private Integer annualLeaveCount;
         private String positionTitle;
+        private Boolean status;
         private LocalDate hiredAt;
         private LocalDate resignedAt;
 
@@ -90,6 +91,7 @@ public class UsersDto {
                     .salary(usersEntity.getUserPrivate().getSalary())
                     .annualLeaveCount(usersEntity.getUserPrivate().getAnnualLeaveCount())
                     .positionTitle(usersEntity.getUserPrivate().getPositionTitle())
+                    .status(usersEntity.getStatus())
                     .hiredAt(usersEntity.getUserPrivate().getHiredAt())
                     .resignedAt(usersEntity.getUserPrivate().getResignedAt())
                     .build();
