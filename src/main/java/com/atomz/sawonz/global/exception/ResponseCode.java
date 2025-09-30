@@ -36,10 +36,11 @@ public enum ResponseCode {
     TOKEN_SUBJECT_MISSING(org.springframework.http.HttpStatus.UNAUTHORIZED, "토큰에 subject 정보가 없습니다"),
     TOKEN_ROLE_MISSING(org.springframework.http.HttpStatus.UNAUTHORIZED, "토큰에 role 정보가 없습니다"),
     NOT_ADMIN_MANAGER(HttpStatus.UNAUTHORIZED, "요청권한이 없습니다."),
+    LOGIN_NO_AUTHORIZATION(HttpStatus.UNAUTHORIZED, "관리자 승인 대기중입니다."),
 
     // 403
     FORBIDDEN(HttpStatus.FORBIDDEN, "접근권한이 없습니다"),
-    NO_AUTHORIZATION(HttpStatus.FORBIDDEN, "관리자 승인 대기중입니다."),
+    SIGNUP_REJECTED(HttpStatus.FORBIDDEN, "회원가입 요청이 거절되었습니다."),
 
     // 404
     NOT_FOUND(HttpStatus.NOT_FOUND, "요청값을 찾을 수 없습니다"),

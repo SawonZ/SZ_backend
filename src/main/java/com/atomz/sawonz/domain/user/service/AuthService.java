@@ -34,9 +34,11 @@ public class AuthService {
             throw new ErrorException(ResponseCode.WRONG_EMAIL_PASSWORD);
         }
 
-        if (!Boolean.TRUE.equals(user.getStatus())) {
-            // status 기본값이 false(비활성)인 구조이므로, 승인 전에는 로그인 차단
-            throw new ErrorException(ResponseCode.NO_AUTHORIZATION);
+        if (user.getStatus() == null ) {
+            throw new ErrorException(ResponseCode.LOGIN_NO_AUTHORIZATION);
+        }
+        if (!user.getStatus()) {
+            throw new ErrorException(ResponseCode.SIGNUP_REJECTED);
         }
 
         String role = user.getRole().name();

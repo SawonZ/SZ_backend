@@ -10,6 +10,7 @@ import com.atomz.sawonz.global.exception.ErrorException;
 import com.atomz.sawonz.global.exception.HttpCustomResponse;
 import com.atomz.sawonz.global.exception.ResponseCode;
 import com.atomz.sawonz.global.security.CustomUserPrincipal;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,7 +31,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public HttpCustomResponse<SignupResponse> signup(
-            @RequestBody SignupRequest signupRequest
+            @RequestBody @Valid SignupRequest signupRequest
     ) {
         return new HttpCustomResponse<>(
                 ResponseCode.SUCCESS,
