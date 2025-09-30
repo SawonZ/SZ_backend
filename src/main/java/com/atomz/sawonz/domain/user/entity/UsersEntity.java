@@ -30,7 +30,7 @@ public class UsersEntity {
     @Column(name = "email", nullable = false, updatable = false)
     private String email;
 
-    @Column(name = "status", nullable = false, updatable = false)
+    @Column(name = "status")
     private Boolean status;
 
     @CreationTimestamp
@@ -48,7 +48,6 @@ public class UsersEntity {
     @PrePersist
     private void ensureDefaults() {
         if (role == null) role = Role.ROLE_MEMBER;
-        if (status == null) status = false;
     }
 
     public enum Role {

@@ -21,6 +21,9 @@ public class AdminDto {
 
         @Email
         private String email;
+
+        @NotNull
+        private Boolean status;
     }
 
     @Getter

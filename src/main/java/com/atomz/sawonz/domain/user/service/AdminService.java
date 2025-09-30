@@ -2,6 +2,7 @@ package com.atomz.sawonz.domain.user.service;
 
 import com.atomz.sawonz.domain.user.dto.AdminDto.UserInfoRequest;
 import com.atomz.sawonz.domain.user.dto.AdminDto.UserResignRequest;
+import com.atomz.sawonz.domain.user.dto.AdminDto.UserStatusRequest;
 import com.atomz.sawonz.domain.user.dto.UsersDto.MyInfoResponse;
 import com.atomz.sawonz.domain.user.entity.UserPrivateEntity;
 import com.atomz.sawonz.domain.user.entity.UsersEntity;
@@ -23,20 +24,18 @@ public class AdminService {
     private final UserPrivateRepository userPrivateRepository;
 
     @Transactional
-    public String userStatus(String email) {
+    public String userStatus(UserStatusRequest userStatusRequest) {
 
-        UsersEntity user = usersRepository.findByEmail(email)
+        UsersEntity user = usersRepository.findByEmail(userStatusRequest.getEmail())
                 .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_USER));
 
-        if (user.getStatus()) {
-            throw new ErrorException(ResponseCode.BAD_REQUEST, "이미 승인된 사용자입니다.");
+        user.setStatus(userStatusRequest.getStatus());
+
+        if (userStatusRequest.getStatus()) {
+            return userStatusRequest.getEmail() + " 가입요청이 승인되었습니다.";
+        } else {
+            return userStatusRequest.getEmail() + " 가입요청이 거절되었습니다.";
         }
-
-        user.setStatus(true);
-
-        usersRepository.save(user);
-
-        return email + " 승인 되었습니다.";
     }
 
     @Transactional(readOnly = true)

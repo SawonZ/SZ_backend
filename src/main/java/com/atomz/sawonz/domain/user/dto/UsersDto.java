@@ -44,6 +44,7 @@ public class UsersDto {
                     .email(signupRequest.getEmail())
                     .phone(signupRequest.getPhone())
                     .passwordHash(passwordHash)
+                    .status(null)
                     .build();
         }
     }
@@ -120,6 +121,7 @@ public class UsersDto {
         private String email;
         private String phone;
         private String positionTitle;
+        private Boolean status;
 
         public static MyCoworkerInfoResponse fromEntity(UsersEntity usersEntity) {
             return MyCoworkerInfoResponse.builder()
@@ -127,6 +129,7 @@ public class UsersDto {
                     .email(usersEntity.getEmail())
                     .phone(usersEntity.getPhone())
                     .positionTitle(usersEntity.getUserPrivate().getPositionTitle())
+                    .status(usersEntity.getStatus())
                     .build();
         }
     }

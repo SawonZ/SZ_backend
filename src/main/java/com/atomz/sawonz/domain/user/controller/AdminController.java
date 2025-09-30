@@ -9,6 +9,7 @@ import com.atomz.sawonz.global.exception.ErrorException;
 import com.atomz.sawonz.global.exception.HttpCustomResponse;
 import com.atomz.sawonz.global.exception.ResponseCode;
 import com.atomz.sawonz.global.security.CustomUserPrincipal;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class AdminController {
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public HttpCustomResponse<String> userStatus(
             @AuthenticationPrincipal CustomUserPrincipal principal,
-            @RequestBody UserStatusRequest userStatusRequest
+            @RequestBody @Valid UserStatusRequest userStatusRequest
     ) {
 
         if (Objects.equals(principal.getEmail(), userStatusRequest.getEmail())) {
@@ -40,7 +41,7 @@ public class AdminController {
 
         return new HttpCustomResponse<>(
                 ResponseCode.SUCCESS,
-                adminService.userStatus(userStatusRequest.getEmail())
+                adminService.userStatus(userStatusRequest)
         );
     }
 
@@ -57,7 +58,7 @@ public class AdminController {
     @PatchMapping("/user/info")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public HttpCustomResponse<MyInfoResponse> userUpdateInfo(
-            @RequestBody UserInfoRequest userInfoRequest
+            @RequestBody @Valid UserInfoRequest userInfoRequest
     ){
         return new HttpCustomResponse<>(
                 ResponseCode.SUCCESS,
@@ -69,7 +70,7 @@ public class AdminController {
     @PatchMapping("/user/resign")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public HttpCustomResponse<MyInfoResponse> userResign(
-            @RequestBody UserResignRequest userResignRequest
+            @RequestBody @Valid UserResignRequest userResignRequest
     ){
         return new HttpCustomResponse<>(
                 ResponseCode.SUCCESS,
