@@ -70,6 +70,7 @@ public class CalendarDto {
     @Builder
     public static class CalendarResponse {
 
+        private Long calendarId;
         private String userName;
         private String email;
         private String phone;
@@ -83,15 +84,15 @@ public class CalendarDto {
         private Boolean status;
 
         public static CalendarResponse fromEntity(
-                UsersEntity usersEntity,
                 CalendarEntity calendarEntity,
                 String calendarType
         ) {
             return CalendarResponse.builder()
-                    .userName(usersEntity.getUserName())
-                    .email(usersEntity.getEmail())
-                    .phone(usersEntity.getPhone())
-                    .positionTitle(usersEntity.getUserPrivate().getPositionTitle())
+                    .calendarId(calendarEntity.getUser().getId())
+                    .userName(calendarEntity.getUser().getUserName())
+                    .email(calendarEntity.getUser().getEmail())
+                    .phone(calendarEntity.getUser().getPhone())
+                    .positionTitle(calendarEntity.getUser().getUserPrivate().getPositionTitle())
                     .calendarType(calendarType)
                     .date(calendarEntity.getDate())
                     .startTime(calendarEntity.getStartTime())

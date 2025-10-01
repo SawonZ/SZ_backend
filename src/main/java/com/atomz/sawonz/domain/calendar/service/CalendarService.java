@@ -15,6 +15,8 @@ import com.atomz.sawonz.domain.user.entity.UsersEntity;
 import com.atomz.sawonz.domain.user.repository.UsersRepository;
 import com.atomz.sawonz.global.exception.ErrorException;
 import com.atomz.sawonz.global.exception.ResponseCode;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,10 +40,28 @@ public class CalendarService {
                 CalendarCreateRequest.toEntity(user, calendarType, calendarCreateRequest));
 
         return CalendarResponse.fromEntity(
-                user,
                 calendarEntity,
                 calendarCreateRequest.getCalendarType()
         );
+    }
+
+    public List<CalendarResponse> listAllCalendars() {
+
+        List<CalendarEntity> calendarEntities = calendarRepository.findAll();
+
+        List<CalendarResponse> calendarResponseList = new ArrayList<>();
+
+        for(CalendarEntity calendarEntity : calendarEntities) {
+
+            calendarResponseList.add(
+                    CalendarResponse.fromEntity(
+                            calendarEntity, toString(
+                                    calendarEntity.getCalendarType()
+                            )
+                    )
+            );
+        }
+        return calendarResponseList;
     }
 
     public static CalendarType fromString(String type) {
@@ -66,6 +86,27 @@ public class CalendarService {
             return CalendarType.valueOf(type);
         } catch (IllegalArgumentException ex) {
             throw new ErrorException(ResponseCode.BAD_REQUEST, "알 수 없는 일정 타입 요청: " + type);
+        }
+    }
+
+    public static String toString(CalendarType type) {
+        if (type == null) {
+            throw new ErrorException(ResponseCode.BAD_REQUEST, "calendarType이 null 입니다.");
+        }
+        switch (type) {
+            case OUTSIDE_WORK:
+                return "outside_work";
+            case FULL_REST:
+                return "full_rest";
+            case AM_REST:
+                return "am_rest";
+            case PM_REST:
+                return "pm_rest";
+            case WORKTIME_UPDATE:
+                return "worktime_update";
+            default:
+                // 별칭을 정의하지 않은 enum은 기본 name() 반환
+                return type.name();
         }
     }
 }

@@ -8,9 +8,11 @@ import com.atomz.sawonz.global.exception.HttpCustomResponse;
 import com.atomz.sawonz.global.exception.ResponseCode;
 import com.atomz.sawonz.global.security.CustomUserPrincipal;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,4 +39,15 @@ public class CalendarController {
                 )
         );
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/all")
+    public HttpCustomResponse<List<CalendarResponse>> getAllCalendars() {
+        return new HttpCustomResponse<>(
+                ResponseCode.SUCCESS,
+                calendarService.listAllCalendars()
+        );
+    }
+
+
 }
