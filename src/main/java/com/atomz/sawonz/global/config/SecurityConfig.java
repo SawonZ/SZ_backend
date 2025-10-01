@@ -3,6 +3,7 @@ package com.atomz.sawonz.global.config;
 import com.atomz.sawonz.global.security.JwtAuthenticationFilter;
 import com.atomz.sawonz.global.security.RestAccessDeniedHandler;
 import com.atomz.sawonz.global.security.RestAuthenticationEntryPoint;
+import jakarta.servlet.DispatcherType;
 import java.time.Duration;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .dispatcherTypeMatchers(DispatcherType.ERROR, DispatcherType.FORWARD).permitAll()
+
                         // 이메일 인증 전체 공개
                         .requestMatchers("/email/**").permitAll()
 

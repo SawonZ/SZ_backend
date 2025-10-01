@@ -19,6 +19,10 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException {
 
+        if (response.isCommitted()) {
+            return;
+        }
+
         ResponseCode code = (ResponseCode) request.getAttribute("auth_error_code");
         if (code == null) code = ResponseCode.TOKEN_INVALID;
 
