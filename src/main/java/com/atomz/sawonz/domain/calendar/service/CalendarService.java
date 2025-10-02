@@ -86,6 +86,24 @@ public class CalendarService {
         return calendarResponseList;
     }
 
+    @Transactional
+    public String deleteCalendar(String email, Long calendarId) {
+        CalendarEntity calendarEntity = calendarRepository.findById(calendarId)
+                .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_CALENDAR));
+
+        if(!calendarEntity.getUser().getEmail().equals(email)) {
+            throw new ErrorException(ResponseCode.BAD_REQUEST, "일정 삭제는 본인것만 가능합니다.");
+        }
+
+        if(calendarEntity.getStatus() != null) {
+            throw new ErrorException(ResponseCode.BAD_REQUEST, "일정 삭제는 상태가 진행중일때만 가능합니다.");
+        }
+
+        calendarRepository.delete(calendarEntity);
+
+        return "삭제 요청이 정상적으로 처리되었습니다";
+    }
+
     public static CalendarType fromString(String type) {
         if (type == null || type.trim().isEmpty()) {
             throw new ErrorException(ResponseCode.BAD_REQUEST, "calendarType이 비어 있습니다.");
@@ -131,4 +149,5 @@ public class CalendarService {
                 return type.name();
         }
     }
+
 }

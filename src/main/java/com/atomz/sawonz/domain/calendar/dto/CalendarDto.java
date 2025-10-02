@@ -88,7 +88,7 @@ public class CalendarDto {
                 String calendarType
         ) {
             return CalendarResponse.builder()
-                    .calendarId(calendarEntity.getUser().getId())
+                    .calendarId(calendarEntity.getCalendarId())
                     .userName(calendarEntity.getUser().getUserName())
                     .email(calendarEntity.getUser().getEmail())
                     .phone(calendarEntity.getUser().getPhone())
@@ -102,7 +102,5 @@ public class CalendarDto {
                     .status(calendarEntity.getStatus())
                     .build();
         }
-
     }
-
 }
