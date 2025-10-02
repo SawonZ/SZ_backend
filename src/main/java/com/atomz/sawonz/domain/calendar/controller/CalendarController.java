@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -41,13 +42,15 @@ public class CalendarController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/all")
-    public HttpCustomResponse<List<CalendarResponse>> getAllCalendars() {
+    @GetMapping("")
+    public HttpCustomResponse<List<CalendarResponse>> getAllCalendars(
+            @AuthenticationPrincipal CustomUserPrincipal principal,
+            @RequestParam(name = "list", defaultValue = "all") String list
+    ) {
         return new HttpCustomResponse<>(
                 ResponseCode.SUCCESS,
-                calendarService.listAllCalendars()
+                calendarService.listAllCalendars(principal.getEmail(), list)
         );
     }
-
 
 }

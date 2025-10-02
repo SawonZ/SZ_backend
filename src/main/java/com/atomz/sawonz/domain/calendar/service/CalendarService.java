@@ -17,8 +17,10 @@ import com.atomz.sawonz.global.exception.ErrorException;
 import com.atomz.sawonz.global.exception.ResponseCode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ public class CalendarService {
     private final UsersRepository usersRepository;
     private final CalendarRepository calendarRepository;
 
+    @Transactional
     public CalendarResponse createCalendar(
             String email,
             CalendarCreateRequest calendarCreateRequest
@@ -45,9 +48,28 @@ public class CalendarService {
         );
     }
 
-    public List<CalendarResponse> listAllCalendars() {
+    @Transactional(readOnly = true)
+    public List<CalendarResponse> listAllCalendars(
+            String email,
+            String list
+    ) {
 
-        List<CalendarEntity> calendarEntities = calendarRepository.findAll();
+        final String listMode = (list != null && list.trim().equalsIgnoreCase("me"))
+                ? "me"
+                : "all";
+
+        List<CalendarEntity> calendarEntities;
+
+        if (Objects.equals(listMode, "me")) {
+            if (email == null || email.isBlank()) {
+                throw new ErrorException(ResponseCode.BAD_REQUEST, "me 조회 시 email값이 필요합니다.");
+            }
+            UsersEntity usersEntity = usersRepository.findByEmail(email)
+                    .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_USER));
+            calendarEntities = calendarRepository.findByUser(usersEntity);
+        } else {
+            calendarEntities = calendarRepository.findAll();
+        }
 
         List<CalendarResponse> calendarResponseList = new ArrayList<>();
 
