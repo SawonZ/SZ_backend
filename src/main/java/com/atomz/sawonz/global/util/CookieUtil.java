@@ -44,7 +44,7 @@ public class CookieUtil {
 
     public ResponseCookie buildRt(String name, String value) {
 
-        long rtMaxAgeSec = refreshExpMin * 60;
+        long rtMaxAgeSec = refreshExpMin * 720;
 
         return ResponseCookie.from(name, value)
                 .httpOnly(true)

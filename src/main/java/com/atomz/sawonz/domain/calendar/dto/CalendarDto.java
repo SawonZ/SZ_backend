@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +23,7 @@ public class CalendarDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class CalendarCreateRequest {
+    public static class CalendarRequest {
 
         @NotNull(message = "calendarType은 필수입니다.")
         private String calendarType;
@@ -47,17 +48,17 @@ public class CalendarDto {
         public static CalendarEntity toEntity(
                 UsersEntity usersEntity,
                 CalendarType calendarType,
-                CalendarCreateRequest calendarCreateRequest
+                CalendarRequest calendarRequest
         ) {
             return CalendarEntity.builder()
                     .user(usersEntity)
                     .calendarType(calendarType)
-                    .date(calendarCreateRequest.getDate())
-                    .startTime(calendarCreateRequest.getStartTime())
-                    .endTime(calendarCreateRequest.getEndTime())
+                    .date(calendarRequest.getDate())
+                    .startTime(calendarRequest.getStartTime())
+                    .endTime(calendarRequest.getEndTime())
                     .status(null)
-                    .calendarTitle(calendarCreateRequest.getCalendarTitle())
-                    .calendarMemo(calendarCreateRequest.getCalendarMemo())
+                    .calendarTitle(calendarRequest.getCalendarTitle())
+                    .calendarMemo(calendarRequest.getCalendarMemo())
                     .build();
         }
 
@@ -82,6 +83,8 @@ public class CalendarDto {
         private String calendarTitle;
         private String calendarMemo;
         private Boolean status;
+        private LocalDateTime createAt;
+        private LocalDateTime updatedAt;
 
         public static CalendarResponse fromEntity(
                 CalendarEntity calendarEntity,
@@ -100,7 +103,10 @@ public class CalendarDto {
                     .calendarTitle(calendarEntity.getCalendarTitle())
                     .calendarMemo(calendarEntity.getCalendarMemo())
                     .status(calendarEntity.getStatus())
+                    .createAt(calendarEntity.getCreatedAt())
+                    .updatedAt(calendarEntity.getUpdatedAt())
                     .build();
         }
     }
+
 }

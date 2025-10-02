@@ -6,7 +6,7 @@ import static com.atomz.sawonz.domain.leave.entity.CalendarEntity.CalendarType.O
 import static com.atomz.sawonz.domain.leave.entity.CalendarEntity.CalendarType.PM_REST;
 import static com.atomz.sawonz.domain.leave.entity.CalendarEntity.CalendarType.WORKTIME_UPDATE;
 
-import com.atomz.sawonz.domain.calendar.dto.CalendarDto.CalendarCreateRequest;
+import com.atomz.sawonz.domain.calendar.dto.CalendarDto.CalendarRequest;
 import com.atomz.sawonz.domain.calendar.dto.CalendarDto.CalendarResponse;
 import com.atomz.sawonz.domain.calendar.repository.CalendarRepository;
 import com.atomz.sawonz.domain.leave.entity.CalendarEntity;
@@ -32,19 +32,19 @@ public class CalendarService {
     @Transactional
     public CalendarResponse createCalendar(
             String email,
-            CalendarCreateRequest calendarCreateRequest
+            CalendarRequest calendarRequest
     ) {
         UsersEntity user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_USER));
 
-        CalendarType calendarType = fromString(calendarCreateRequest.getCalendarType());
+        CalendarType calendarType = fromString(calendarRequest.getCalendarType());
 
         CalendarEntity calendarEntity= calendarRepository.save(
-                CalendarCreateRequest.toEntity(user, calendarType, calendarCreateRequest));
+                CalendarRequest.toEntity(user, calendarType, calendarRequest));
 
         return CalendarResponse.fromEntity(
                 calendarEntity,
-                calendarCreateRequest.getCalendarType()
+                calendarRequest.getCalendarType()
         );
     }
 
@@ -96,12 +96,41 @@ public class CalendarService {
         }
 
         if(calendarEntity.getStatus() != null) {
-            throw new ErrorException(ResponseCode.BAD_REQUEST, "일정 삭제는 상태가 진행중일때만 가능합니다.");
+            throw new ErrorException(ResponseCode.BAD_REQUEST, "일정 삭제는 상태가 진행중일 때만 가능합니다.");
         }
 
         calendarRepository.delete(calendarEntity);
 
         return "삭제 요청이 정상적으로 처리되었습니다";
+    }
+
+    @Transactional
+    public CalendarResponse updateCalendar(
+            String email,
+            CalendarRequest calendarRequest,
+            Long calendarId
+    ) {
+        CalendarEntity calendarEntity = calendarRepository.findById(calendarId)
+                .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_CALENDAR));
+
+        if(!calendarEntity.getUser().getEmail().equals(email)) {
+            throw new ErrorException(ResponseCode.BAD_REQUEST, "일정 수정은 본인것만 가능합니다.");
+        }
+
+        if(calendarEntity.getStatus() != null) {
+            throw new ErrorException(ResponseCode.BAD_REQUEST, "일정 수정 상태가 진행중일 때만 가능합니다.");
+        }
+
+        CalendarType calendarType = fromString(calendarRequest.getCalendarType());
+
+        calendarEntity.setCalendarType(calendarType);
+        calendarEntity.setDate(calendarRequest.getDate());
+        calendarEntity.setStartTime(calendarRequest.getStartTime());
+        calendarEntity.setEndTime(calendarRequest.getEndTime());
+        calendarEntity.setCalendarTitle(calendarRequest.getCalendarTitle());
+        calendarEntity.setCalendarMemo(calendarRequest.getCalendarMemo());
+
+        return CalendarResponse.fromEntity(calendarEntity, calendarRequest.getCalendarType());
     }
 
     public static CalendarType fromString(String type) {
