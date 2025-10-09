@@ -78,8 +78,8 @@ public class UsersDto {
         private String email;
         private String phone;
         private String address;
-        private Integer salary;
-        private Integer annualLeaveCount;
+        private Long salary;
+        private Double annualLeaveCount;
         private String positionTitle;
         private Boolean status;
         private LocalDate hiredAt;

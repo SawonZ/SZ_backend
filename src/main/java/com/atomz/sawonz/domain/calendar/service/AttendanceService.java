@@ -8,7 +8,7 @@ import com.atomz.sawonz.domain.user.repository.UsersRepository;
 import com.atomz.sawonz.global.exception.ErrorException;
 import com.atomz.sawonz.global.exception.ResponseCode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class AttendanceService {
                 .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_USER));
 
         LocalDate today = LocalDate.now(KST);
-        LocalDateTime now = LocalDateTime.now(KST);
+        LocalTime now = LocalTime.now(KST);
 
         if (attendanceRepository.existsByUserAndWorkDate(user, today)) {
             throw new ErrorException(ResponseCode.BAD_REQUEST, "이미 오늘 출근이 처리되었습니다.");
@@ -54,7 +54,7 @@ public class AttendanceService {
                 .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_USER));
 
         LocalDate today = LocalDate.now(KST);
-        LocalDateTime now = LocalDateTime.now(KST);
+        LocalTime now = LocalTime.now(KST);
 
         AttendanceEntity attendanceEntity = attendanceRepository.findByUserAndWorkDate(user, today)
                 .orElseThrow(() -> new ErrorException(ResponseCode.BAD_REQUEST, "오늘 출근 기록이 없습니다."));

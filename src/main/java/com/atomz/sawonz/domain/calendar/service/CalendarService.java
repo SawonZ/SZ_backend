@@ -8,6 +8,8 @@ import static com.atomz.sawonz.domain.leave.entity.CalendarEntity.CalendarType.W
 
 import com.atomz.sawonz.domain.calendar.dto.CalendarDto.CalendarRequest;
 import com.atomz.sawonz.domain.calendar.dto.CalendarDto.CalendarResponse;
+import com.atomz.sawonz.domain.calendar.entity.AttendanceEntity;
+import com.atomz.sawonz.domain.calendar.repository.AttendanceRepository;
 import com.atomz.sawonz.domain.calendar.repository.CalendarRepository;
 import com.atomz.sawonz.domain.leave.entity.CalendarEntity;
 import com.atomz.sawonz.domain.leave.entity.CalendarEntity.CalendarType;
@@ -28,6 +30,7 @@ public class CalendarService {
 
     private final UsersRepository usersRepository;
     private final CalendarRepository calendarRepository;
+    private final AttendanceRepository attendanceRepository;
 
     @Transactional
     public CalendarResponse createCalendar(
@@ -37,7 +40,7 @@ public class CalendarService {
         UsersEntity user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_USER));
 
-        CalendarType calendarType = fromString(calendarRequest.getCalendarType());
+        CalendarType calendarType = typeFromString(calendarRequest.getCalendarType());
 
         CalendarEntity calendarEntity= calendarRepository.save(
                 CalendarRequest.toEntity(user, calendarType, calendarRequest));
@@ -77,7 +80,7 @@ public class CalendarService {
 
             calendarResponseList.add(
                     CalendarResponse.fromEntity(
-                            calendarEntity, toString(
+                            calendarEntity, typeToString(
                                     calendarEntity.getCalendarType()
                             )
                     )
@@ -121,7 +124,7 @@ public class CalendarService {
             throw new ErrorException(ResponseCode.BAD_REQUEST, "일정 수정 상태가 진행중일 때만 가능합니다.");
         }
 
-        CalendarType calendarType = fromString(calendarRequest.getCalendarType());
+        CalendarType calendarType = typeFromString(calendarRequest.getCalendarType());
 
         calendarEntity.setCalendarType(calendarType);
         calendarEntity.setDate(calendarRequest.getDate());
@@ -133,7 +136,71 @@ public class CalendarService {
         return CalendarResponse.fromEntity(calendarEntity, calendarRequest.getCalendarType());
     }
 
-    public static CalendarType fromString(String type) {
+    @Transactional
+    public CalendarResponse statusApproved(
+            Long calendarId
+    ){
+
+        CalendarEntity calendarEntity = calendarRepository.findById(calendarId)
+                .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_CALENDAR));
+
+        if (calendarEntity.getStatus() != null) {
+            throw new ErrorException(ResponseCode.BAD_REQUEST, "이미 처리된 일정입니다.");
+        }
+
+        if(calendarEntity.getCalendarType() == FULL_REST) {
+            UsersEntity usersEntity = calendarEntity.getUser();
+            Double newAnnualLeaveCount = usersEntity.getUserPrivate().getAnnualLeaveCount() - 1;
+            usersEntity.getUserPrivate().setAnnualLeaveCount(newAnnualLeaveCount);
+        }
+
+        if(calendarEntity.getCalendarType() == AM_REST ||
+                calendarEntity.getCalendarType() == PM_REST
+        ) {
+            UsersEntity usersEntity = calendarEntity.getUser();
+            Double newAnnualLeaveCount = usersEntity.getUserPrivate().getAnnualLeaveCount() - 0.5;
+            usersEntity.getUserPrivate().setAnnualLeaveCount(newAnnualLeaveCount);
+        }
+
+        if(calendarEntity.getCalendarType() == WORKTIME_UPDATE) {
+            AttendanceEntity attendanceEntity = attendanceRepository.findByUserAndWorkDate(
+                        calendarEntity.getUser(),
+                        calendarEntity.getDate())
+                    .orElseThrow(() -> new ErrorException(ResponseCode.BAD_REQUEST, "출근 기록이 없습니다."));
+
+            attendanceEntity.setCheckInAt(calendarEntity.getStartTime());
+            attendanceEntity.setCheckOutAt(calendarEntity.getEndTime());
+        }
+
+        calendarEntity.setStatus(true);
+
+        return CalendarResponse.fromEntity(
+                calendarEntity,
+                typeToString(calendarEntity.getCalendarType())
+        );
+    }
+
+    @Transactional
+    public CalendarResponse statusRejected(
+            Long calendarId
+    ){
+
+        CalendarEntity calendarEntity = calendarRepository.findById(calendarId)
+                .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_CALENDAR));
+
+        if (calendarEntity.getStatus() != null) {
+            throw new ErrorException(ResponseCode.BAD_REQUEST, "이미 처리된 일정입니다.");
+        }
+
+        calendarEntity.setStatus(false);
+
+        return CalendarResponse.fromEntity(
+                calendarEntity,
+                typeToString(calendarEntity.getCalendarType())
+        );
+    }
+
+    public static CalendarType typeFromString(String type) {
         if (type == null || type.trim().isEmpty()) {
             throw new ErrorException(ResponseCode.BAD_REQUEST, "calendarType이 비어 있습니다.");
         }
@@ -158,7 +225,7 @@ public class CalendarService {
         }
     }
 
-    public static String toString(CalendarType type) {
+    public static String typeToString(CalendarType type) {
         if (type == null) {
             throw new ErrorException(ResponseCode.BAD_REQUEST, "calendarType이 null 입니다.");
         }

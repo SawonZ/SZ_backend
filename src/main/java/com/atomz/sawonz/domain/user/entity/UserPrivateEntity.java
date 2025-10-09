@@ -26,10 +26,10 @@ public class UserPrivateEntity {
     private String address;
 
     @Column(name = "salary", nullable = false)                // 연봉
-    private Integer salary;
+    private Long salary;
 
     @Column(name = "annualLeaveCount", nullable = false)      // 연차(연간 휴가 개수)
-    private Integer annualLeaveCount;
+    private Double annualLeaveCount;
 
     @Column(name = "positionTitle", nullable = false)         // 직급
     private String positionTitle;

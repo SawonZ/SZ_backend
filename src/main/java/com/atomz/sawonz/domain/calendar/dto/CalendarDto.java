@@ -109,4 +109,14 @@ public class CalendarDto {
         }
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class CalendarStatusUpdateRequest {
+
+        @NotNull(message = "일정 승인 여부값은 필수입니다.")
+        private Boolean status;
+    }
 }

@@ -37,8 +37,8 @@ public class AdminDto {
         @Email
         private String email;
 
-        private Integer salary;
-        private Integer annualLeaveCount;
+        private Long salary;
+        private Double annualLeaveCount;
         private String positionTitle;
         private LocalDate hiredAt;
 

@@ -1,11 +1,8 @@
 package com.atomz.sawonz.domain.calendar.dto;
 
 import com.atomz.sawonz.domain.calendar.entity.AttendanceEntity;
-import com.atomz.sawonz.domain.user.entity.UsersEntity;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,8 +20,8 @@ public class AttendanceDto {
 
         private Long attendanceId;
         private LocalDate workDate;
-        private LocalDateTime checkInAt;
-        private LocalDateTime checkOutAt;
+        private LocalTime checkInAt;
+        private LocalTime checkOutAt;
         private String checkInIp;
         private String checkOutIp;
         private Boolean updated;

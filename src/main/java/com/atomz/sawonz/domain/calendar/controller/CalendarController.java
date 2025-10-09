@@ -2,7 +2,9 @@ package com.atomz.sawonz.domain.calendar.controller;
 
 import com.atomz.sawonz.domain.calendar.dto.CalendarDto.CalendarRequest;
 import com.atomz.sawonz.domain.calendar.dto.CalendarDto.CalendarResponse;
+import com.atomz.sawonz.domain.calendar.dto.CalendarDto.CalendarStatusUpdateRequest;
 import com.atomz.sawonz.domain.calendar.service.CalendarService;
+import com.atomz.sawonz.global.exception.ErrorException;
 import com.atomz.sawonz.global.exception.HttpCustomResponse;
 import com.atomz.sawonz.global.exception.ResponseCode;
 import com.atomz.sawonz.global.security.CustomUserPrincipal;
@@ -13,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -28,8 +31,8 @@ public class CalendarController {
 
     private final CalendarService calendarService;
 
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("")
+    @PreAuthorize("isAuthenticated()")
     public HttpCustomResponse<CalendarResponse> createCalendar(
             @AuthenticationPrincipal CustomUserPrincipal principal,
             @RequestBody @Valid CalendarRequest calendarRequest
@@ -44,8 +47,8 @@ public class CalendarController {
         );
     }
 
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("")
+    @PreAuthorize("isAuthenticated()")
     public HttpCustomResponse<List<CalendarResponse>> getAllCalendars(
             @AuthenticationPrincipal CustomUserPrincipal principal,
             @RequestParam(name = "list", defaultValue = "all") String list
@@ -59,8 +62,8 @@ public class CalendarController {
         );
     }
 
-    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{calendarId}")
+    @PreAuthorize("isAuthenticated()")
     public HttpCustomResponse<String> deleteCalendar(
             @AuthenticationPrincipal CustomUserPrincipal principal,
             @PathVariable Long calendarId
@@ -75,8 +78,8 @@ public class CalendarController {
         );
     }
 
-    @PreAuthorize("isAuthenticated()")
     @PutMapping("/{calendarId}")
+    @PreAuthorize("isAuthenticated()")
     public HttpCustomResponse<CalendarResponse> updateCalendar(
             @AuthenticationPrincipal CustomUserPrincipal principal,
             @RequestBody @Valid CalendarRequest calendarRequest,
@@ -90,6 +93,30 @@ public class CalendarController {
                         calendarRequest,
                         calendarId
                 )
+        );
+    }
+
+    @PatchMapping("/{calendarId}")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+    public HttpCustomResponse<CalendarResponse> statusUpdateCalendar(
+            @RequestBody @Valid CalendarStatusUpdateRequest calendarStatusUpdateRequest,
+            @PathVariable Long calendarId
+    ) {
+        if (calendarStatusUpdateRequest.getStatus() == null) {
+            throw new ErrorException(ResponseCode.BAD_REQUEST, "일정 승인 여부 값이 없습니다.");
+        }
+
+        CalendarResponse calendarResponse;
+
+        if (calendarStatusUpdateRequest.getStatus()) {
+            calendarResponse = calendarService.statusApproved(calendarId);
+        } else {
+            calendarResponse = calendarService.statusRejected(calendarId);
+        }
+
+        return new HttpCustomResponse<>(
+                ResponseCode.SUCCESS,
+                calendarResponse
         );
     }
 }
