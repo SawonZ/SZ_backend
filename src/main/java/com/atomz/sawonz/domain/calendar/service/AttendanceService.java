@@ -1,5 +1,6 @@
 package com.atomz.sawonz.domain.calendar.service;
 
+import com.atomz.sawonz.domain.calendar.dto.AttendanceDto.MyAttendanceResponse;
 import com.atomz.sawonz.domain.calendar.entity.AttendanceEntity;
 import com.atomz.sawonz.domain.calendar.repository.AttendanceRepository;
 import com.atomz.sawonz.domain.user.entity.UsersEntity;
@@ -9,6 +10,8 @@ import com.atomz.sawonz.global.exception.ResponseCode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,5 +66,19 @@ public class AttendanceService {
         attendanceEntity.setCheckOutAt(now);
 
         return today + " 퇴근 처리가 완료되었습니다.";
+    }
+
+    @Transactional(readOnly = true)
+    public List<MyAttendanceResponse> me(String email) {
+        UsersEntity user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_USER));
+
+        List<AttendanceEntity> attendanceEntities = attendanceRepository.findByUser(user);
+        List<MyAttendanceResponse> myAttendanceResponseList = new ArrayList<>();
+        for (AttendanceEntity attendanceEntity : attendanceEntities) {
+            myAttendanceResponseList.add(MyAttendanceResponse.fromEntity(attendanceEntity));
+        }
+
+        return myAttendanceResponseList;
     }
 }

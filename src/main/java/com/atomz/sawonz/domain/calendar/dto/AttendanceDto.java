@@ -4,6 +4,8 @@ import com.atomz.sawonz.domain.calendar.entity.AttendanceEntity;
 import com.atomz.sawonz.domain.user.entity.UsersEntity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,20 +19,27 @@ public class AttendanceDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class AttendanceCreateResponse {
+    public static class MyAttendanceResponse {
 
-        String msg;
+        private Long attendanceId;
+        private LocalDate workDate;
+        private LocalDateTime checkInAt;
+        private LocalDateTime checkOutAt;
+        private String checkInIp;
+        private String checkOutIp;
+        private Boolean updated;
 
-        public static AttendanceEntity toEntity(
-                UsersEntity usersEntity,
-                LocalDate today,
-                LocalDateTime now
+        public static MyAttendanceResponse fromEntity(
+                AttendanceEntity attendanceEntity
                 ) {
-            return AttendanceEntity.builder()
-                    .user(usersEntity)
-                    .workDate(today)
-                    .checkInAt(now)
-                    .updated(false)
+            return MyAttendanceResponse.builder()
+                    .attendanceId(attendanceEntity.getAttendanceId())
+                    .workDate(attendanceEntity.getWorkDate())
+                    .checkInAt(attendanceEntity.getCheckInAt())
+                    .checkOutAt(attendanceEntity.getCheckOutAt())
+                    .checkInIp(attendanceEntity.getCheckInIp())
+                    .checkOutIp(attendanceEntity.getCheckOutIp())
+                    .updated(attendanceEntity.getUpdated())
                     .build();
         }
     }

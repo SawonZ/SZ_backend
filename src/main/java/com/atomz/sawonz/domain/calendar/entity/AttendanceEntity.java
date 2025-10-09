@@ -1,12 +1,22 @@
 package com.atomz.sawonz.domain.calendar.entity;
 
 import com.atomz.sawonz.domain.user.entity.UsersEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Getter
@@ -44,25 +54,5 @@ public class AttendanceEntity {
 
     @Column(name = "updated")
     private Boolean updated;
-
-    public void punchIn(LocalDateTime now) {
-        if (this.checkInAt != null) {
-            throw new IllegalStateException("이미 출근이 찍혔습니다.");
-        }
-        this.checkInAt = now;
-//        this.checkInIp = ip;
-    }
-
-    public void punchOut(LocalDateTime now) {
-        if (this.checkInAt == null) {
-            throw new IllegalStateException("출근 기록이 없어 퇴근할 수 없습니다.");
-        }
-        if (this.checkOutAt != null) {
-            throw new IllegalStateException("이미 퇴근이 찍혔습니다.");
-        }
-        this.checkOutAt = now;
-//        this.checkOutIp = ip;
-    }
-
 
 }

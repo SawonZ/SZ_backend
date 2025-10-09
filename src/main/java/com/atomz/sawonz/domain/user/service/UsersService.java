@@ -1,5 +1,8 @@
 package com.atomz.sawonz.domain.user.service;
 
+import com.atomz.sawonz.domain.calendar.dto.AttendanceDto.MyAttendanceResponse;
+import com.atomz.sawonz.domain.calendar.entity.AttendanceEntity;
+import com.atomz.sawonz.domain.calendar.repository.AttendanceRepository;
 import com.atomz.sawonz.domain.user.dto.UsersDto.MyCoworkerInfoResponse;
 import com.atomz.sawonz.domain.user.dto.UsersDto.MyInfoResponse;
 import com.atomz.sawonz.domain.user.dto.UsersDto.MyInfoUpdateRequest;
@@ -25,6 +28,7 @@ public class UsersService {
 
     private final UsersRepository usersRepository;
     private final UserPrivateRepository userPrivateRepository;
+    private final AttendanceRepository attendanceRepository;
     private final EmailCheckRepository emailCheckRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -65,10 +69,13 @@ public class UsersService {
     @Transactional(readOnly = true)
     public MyInfoResponse myInfo(String email) {
 
-        UsersEntity user = usersRepository.findByEmail(email)
+        UsersEntity usersEntity = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_USER));
 
-        return MyInfoResponse.fromEntity(user);
+        return MyInfoResponse.fromEntity(
+                usersEntity,
+                myAttendanceResponseList(usersEntity)
+        );
     }
 
     @Transactional(readOnly = true)
@@ -95,18 +102,34 @@ public class UsersService {
             throw new ErrorException(ResponseCode.BAD_REQUEST, "수정하려는 값이 최소 하나이상 존재해야합니다.");
         }
 
-        UsersEntity user = usersRepository.findByEmail(email)
+        UsersEntity usersEntity = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_USER));
 
         if (myInfoUpdateRequest.getPhone() != null && !myInfoUpdateRequest.getPhone().isEmpty()) {
-            user.setPhone(myInfoUpdateRequest.getPhone());
+            usersEntity.setPhone(myInfoUpdateRequest.getPhone());
         }
 
         if (myInfoUpdateRequest.getAddress() != null && !myInfoUpdateRequest.getAddress().isEmpty()) {
-            UserPrivateEntity userPrivateEntity = user.getUserPrivate();
+            UserPrivateEntity userPrivateEntity = usersEntity.getUserPrivate();
             userPrivateEntity.setAddress(myInfoUpdateRequest.getAddress());
         }
 
-        return MyInfoResponse.fromEntity(user);
+        return MyInfoResponse.fromEntity(
+                usersEntity,
+                myAttendanceResponseList(usersEntity)
+        );
     }
+
+    private List<MyAttendanceResponse> myAttendanceResponseList(UsersEntity usersEntity) {
+
+        List<AttendanceEntity> attendanceEntities = attendanceRepository.findByUser(usersEntity);
+
+        List<MyAttendanceResponse> myAttendanceResponseList = new ArrayList<>();
+        for (AttendanceEntity attendanceEntity : attendanceEntities) {
+            myAttendanceResponseList.add(MyAttendanceResponse.fromEntity(attendanceEntity));
+        }
+
+        return myAttendanceResponseList;
+    }
+
 }

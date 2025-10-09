@@ -1,11 +1,13 @@
 package com.atomz.sawonz.domain.user.dto;
 
+import com.atomz.sawonz.domain.calendar.dto.AttendanceDto.MyAttendanceResponse;
 import com.atomz.sawonz.domain.user.entity.UsersEntity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.*;
 
 public class UsersDto {
@@ -82,8 +84,12 @@ public class UsersDto {
         private Boolean status;
         private LocalDate hiredAt;
         private LocalDate resignedAt;
+        private List<MyAttendanceResponse> attendanceList;
 
-        public static MyInfoResponse fromEntity(UsersEntity usersEntity) {
+        public static MyInfoResponse fromEntity(
+                UsersEntity usersEntity,
+                List<MyAttendanceResponse> attendanceList
+                ) {
             return MyInfoResponse.builder()
                     .userName(usersEntity.getUserName())
                     .email(usersEntity.getEmail())
@@ -95,8 +101,10 @@ public class UsersDto {
                     .status(usersEntity.getStatus())
                     .hiredAt(usersEntity.getUserPrivate().getHiredAt())
                     .resignedAt(usersEntity.getUserPrivate().getResignedAt())
+                    .attendanceList(attendanceList)
                     .build();
         }
+
     }
 
     @Getter

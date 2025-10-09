@@ -1,12 +1,14 @@
 package com.atomz.sawonz.domain.user.service;
 
+import com.atomz.sawonz.domain.calendar.dto.AttendanceDto.MyAttendanceResponse;
+import com.atomz.sawonz.domain.calendar.entity.AttendanceEntity;
+import com.atomz.sawonz.domain.calendar.repository.AttendanceRepository;
 import com.atomz.sawonz.domain.user.dto.AdminDto.UserInfoRequest;
 import com.atomz.sawonz.domain.user.dto.AdminDto.UserResignRequest;
 import com.atomz.sawonz.domain.user.dto.AdminDto.UserStatusRequest;
 import com.atomz.sawonz.domain.user.dto.UsersDto.MyInfoResponse;
 import com.atomz.sawonz.domain.user.entity.UserPrivateEntity;
 import com.atomz.sawonz.domain.user.entity.UsersEntity;
-import com.atomz.sawonz.domain.user.repository.UserPrivateRepository;
 import com.atomz.sawonz.domain.user.repository.UsersRepository;
 import com.atomz.sawonz.global.exception.ErrorException;
 import com.atomz.sawonz.global.exception.ResponseCode;
@@ -21,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminService {
 
     private final UsersRepository usersRepository;
-    private final UserPrivateRepository userPrivateRepository;
+    private final AttendanceRepository attendanceRepository;
 
     @Transactional
     public String userStatus(UserStatusRequest userStatusRequest) {
@@ -45,8 +47,11 @@ public class AdminService {
 
         List<MyInfoResponse> myInfoResponseList = new ArrayList<>();
 
-        for (UsersEntity user : users) {
-            MyInfoResponse myInfoResponse = MyInfoResponse.fromEntity(user);
+        for (UsersEntity usersEntity : users) {
+            MyInfoResponse myInfoResponse = MyInfoResponse.fromEntity(
+                    usersEntity,
+                    myAttendanceResponseList(usersEntity)
+            );
             myInfoResponseList.add(myInfoResponse);
         }
 
@@ -91,7 +96,10 @@ public class AdminService {
             userPrivateEntity.setHiredAt(userInfoRequest.getHiredAt());
         }
 
-        return MyInfoResponse.fromEntity(usersEntity);
+        return MyInfoResponse.fromEntity(
+                usersEntity,
+                myAttendanceResponseList(usersEntity)
+        );
     }
 
     @Transactional
@@ -123,7 +131,22 @@ public class AdminService {
             userPrivateEntity.setResignedAt(null);
         }
 
-        return MyInfoResponse.fromEntity(usersEntity);
+        return MyInfoResponse.fromEntity(
+                usersEntity,
+                myAttendanceResponseList(usersEntity)
+        );
+    }
+
+    private List<MyAttendanceResponse> myAttendanceResponseList(UsersEntity usersEntity) {
+
+        List<AttendanceEntity> attendanceEntities = attendanceRepository.findByUser(usersEntity);
+
+        List<MyAttendanceResponse> myAttendanceResponseList = new ArrayList<>();
+        for (AttendanceEntity attendanceEntity : attendanceEntities) {
+            myAttendanceResponseList.add(MyAttendanceResponse.fromEntity(attendanceEntity));
+        }
+
+        return myAttendanceResponseList;
     }
 
 }
