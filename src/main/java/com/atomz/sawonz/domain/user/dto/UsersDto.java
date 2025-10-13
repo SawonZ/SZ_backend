@@ -82,6 +82,7 @@ public class UsersDto {
         private Double annualLeaveCount;
         private String positionTitle;
         private Boolean status;
+        private String imgUrl;
         private LocalDate hiredAt;
         private LocalDate resignedAt;
         private List<MyAttendanceResponse> attendanceList;
@@ -99,6 +100,7 @@ public class UsersDto {
                     .annualLeaveCount(usersEntity.getUserPrivate().getAnnualLeaveCount())
                     .positionTitle(usersEntity.getUserPrivate().getPositionTitle())
                     .status(usersEntity.getStatus())
+                    .imgUrl(usersEntity.getImgUrl())
                     .hiredAt(usersEntity.getUserPrivate().getHiredAt())
                     .resignedAt(usersEntity.getUserPrivate().getResignedAt())
                     .attendanceList(attendanceList)

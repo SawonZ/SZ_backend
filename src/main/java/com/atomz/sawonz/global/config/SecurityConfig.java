@@ -80,7 +80,9 @@ public class SecurityConfig {
         cfg.setAllowedOrigins(Arrays.asList(
                 "https://sz-frontend-eight.vercel.app",
                 "https://sawonz.world",
+                "http://sawonz.world",
                 "https://www.sawonz.world",
+                "http://www.sawonz.world",
                 "https://sz-frontend-two.vercel.app",
                 "http://localhost:5173"
         ));

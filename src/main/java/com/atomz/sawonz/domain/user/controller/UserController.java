@@ -18,9 +18,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/users")
@@ -71,6 +74,21 @@ public class UserController {
         return new HttpCustomResponse<>(
                 ResponseCode.SUCCESS,
                 usersService.coworkerList()
+        );
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping("/img")
+    public HttpCustomResponse<MyInfoResponse> myImg(
+            @AuthenticationPrincipal CustomUserPrincipal principal,
+            @RequestPart("file") MultipartFile file
+    ) throws Exception {
+        return new HttpCustomResponse<>(
+                ResponseCode.SUCCESS,
+                usersService.myImg(
+                        principal.getEmail(),
+                        file
+                )
         );
     }
 }

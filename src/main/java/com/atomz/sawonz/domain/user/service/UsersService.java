@@ -13,14 +13,17 @@ import com.atomz.sawonz.domain.user.entity.UsersEntity;
 import com.atomz.sawonz.domain.user.repository.EmailCheckRepository;
 import com.atomz.sawonz.domain.user.repository.UserPrivateRepository;
 import com.atomz.sawonz.domain.user.repository.UsersRepository;
+import com.atomz.sawonz.global.aws.S3Service;
 import com.atomz.sawonz.global.exception.ErrorException;
 import com.atomz.sawonz.global.exception.ResponseCode;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +34,7 @@ public class UsersService {
     private final AttendanceRepository attendanceRepository;
     private final EmailCheckRepository emailCheckRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3Service s3Service;
 
     @Transactional
     public SignupResponse signup(SignupRequest signupRequest) {
@@ -120,6 +124,33 @@ public class UsersService {
         );
     }
 
+    @Transactional
+    public MyInfoResponse myImg(
+            String email,
+            MultipartFile file
+    ) throws IOException {
+
+        UsersEntity usersEntity = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_USER));
+
+        if (usersEntity.getImgUrl() != null) {
+            s3Service.deleteByUrl(usersEntity.getImgUrl());
+        }
+
+        if (file != null) {
+            String imgUrl = s3Service.uploadImg(usersEntity.getId().toString(), file);
+
+            usersEntity.setImgUrl(imgUrl);
+        } else {
+            usersEntity.setImgUrl(null);
+        }
+
+        return MyInfoResponse.fromEntity(
+                usersEntity,
+                myAttendanceResponseList(usersEntity)
+        );
+    }
+
     private List<MyAttendanceResponse> myAttendanceResponseList(UsersEntity usersEntity) {
 
         List<AttendanceEntity> attendanceEntities = attendanceRepository.findByUser(usersEntity);
@@ -131,5 +162,6 @@ public class UsersService {
 
         return myAttendanceResponseList;
     }
+
 
 }

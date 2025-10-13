@@ -33,6 +33,9 @@ public class UsersEntity {
     @Column(name = "status")
     private Boolean status;
 
+    @Column(name = "imgUrl", columnDefinition = "TEXT")
+    private String imgUrl;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
