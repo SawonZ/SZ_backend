@@ -132,6 +132,7 @@ public class UsersDto {
         private String phone;
         private String positionTitle;
         private Boolean status;
+        private String imgUrl;
 
         public static MyCoworkerInfoResponse fromEntity(UsersEntity usersEntity) {
             return MyCoworkerInfoResponse.builder()
@@ -140,6 +141,7 @@ public class UsersDto {
                     .phone(usersEntity.getPhone())
                     .positionTitle(usersEntity.getUserPrivate().getPositionTitle())
                     .status(usersEntity.getStatus())
+                    .imgUrl(usersEntity.getImgUrl())
                     .build();
         }
     }
