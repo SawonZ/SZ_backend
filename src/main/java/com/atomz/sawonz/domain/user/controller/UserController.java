@@ -15,6 +15,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -89,6 +90,17 @@ public class UserController {
                         principal.getEmail(),
                         file
                 )
+        );
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/img")
+    public HttpCustomResponse<MyInfoResponse> myImgDelete(
+            @AuthenticationPrincipal CustomUserPrincipal principal
+    ) {
+        return new HttpCustomResponse<>(
+                ResponseCode.SUCCESS,
+                usersService.myImgDelete(principal.getEmail())
         );
     }
 }

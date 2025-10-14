@@ -137,18 +137,40 @@ public class UsersService {
             s3Service.deleteByUrl(usersEntity.getImgUrl());
         }
 
-        if (file != null) {
-            String imgUrl = s3Service.uploadImg(usersEntity.getId().toString(), file);
+        if (file == null || file.isEmpty()) {
 
-            usersEntity.setImgUrl(imgUrl);
-        } else {
             usersEntity.setImgUrl(null);
+        } else {
+
+            String imgUrl = s3Service.uploadImg(usersEntity.getId().toString(), file);
+            usersEntity.setImgUrl(imgUrl);
         }
 
         return MyInfoResponse.fromEntity(
                 usersEntity,
                 myAttendanceResponseList(usersEntity)
         );
+    }
+
+    @Transactional
+    public MyInfoResponse myImgDelete(
+            String email
+    ) {
+
+        UsersEntity usersEntity = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new ErrorException(ResponseCode.NOT_FOUND_USER));
+
+        if (usersEntity.getImgUrl() != null) {
+            s3Service.deleteByUrl(usersEntity.getImgUrl());
+        }
+
+        usersEntity.setImgUrl(null);
+
+        return MyInfoResponse.fromEntity(
+                usersEntity,
+                myAttendanceResponseList(usersEntity)
+        );
+
     }
 
     private List<MyAttendanceResponse> myAttendanceResponseList(UsersEntity usersEntity) {
