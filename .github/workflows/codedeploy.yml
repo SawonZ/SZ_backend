@@ -57,6 +57,12 @@ jobs:
           app.cookie.same-site=None
           app.cookie.path=/
           
+          app.aws.credentials.access-key=${{ secrets.AWS_ACCESS_KEY_ID }}
+          app.aws.credentials.secret-key=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          app.aws.region=${{ secrets.AWS_REGION }}
+          app.aws.s3.bucket=${{ secrets.AWS_S3_BUCKET }}
+          app.aws.s3.presign.expire-seconds=300
+          
           # 계정 등록 ON/OFF 스위치
           app.seed.enabled=true
           
