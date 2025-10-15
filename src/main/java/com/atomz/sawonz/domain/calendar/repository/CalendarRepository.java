@@ -1,6 +1,6 @@
 package com.atomz.sawonz.domain.calendar.repository;
 
-import com.atomz.sawonz.domain.leave.entity.CalendarEntity;
+import com.atomz.sawonz.domain.calendar.entity.CalendarEntity;
 import com.atomz.sawonz.domain.user.entity.UsersEntity;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

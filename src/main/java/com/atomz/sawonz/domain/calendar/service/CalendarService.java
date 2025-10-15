@@ -1,18 +1,18 @@
 package com.atomz.sawonz.domain.calendar.service;
 
-import static com.atomz.sawonz.domain.leave.entity.CalendarEntity.CalendarType.AM_REST;
-import static com.atomz.sawonz.domain.leave.entity.CalendarEntity.CalendarType.FULL_REST;
-import static com.atomz.sawonz.domain.leave.entity.CalendarEntity.CalendarType.OUTSIDE_WORK;
-import static com.atomz.sawonz.domain.leave.entity.CalendarEntity.CalendarType.PM_REST;
-import static com.atomz.sawonz.domain.leave.entity.CalendarEntity.CalendarType.WORKTIME_UPDATE;
+import static com.atomz.sawonz.domain.calendar.entity.CalendarEntity.CalendarType.AM_REST;
+import static com.atomz.sawonz.domain.calendar.entity.CalendarEntity.CalendarType.FULL_REST;
+import static com.atomz.sawonz.domain.calendar.entity.CalendarEntity.CalendarType.OUTSIDE_WORK;
+import static com.atomz.sawonz.domain.calendar.entity.CalendarEntity.CalendarType.PM_REST;
+import static com.atomz.sawonz.domain.calendar.entity.CalendarEntity.CalendarType.WORKTIME_UPDATE;
 
 import com.atomz.sawonz.domain.calendar.dto.CalendarDto.CalendarRequest;
 import com.atomz.sawonz.domain.calendar.dto.CalendarDto.CalendarResponse;
 import com.atomz.sawonz.domain.calendar.entity.AttendanceEntity;
 import com.atomz.sawonz.domain.calendar.repository.AttendanceRepository;
 import com.atomz.sawonz.domain.calendar.repository.CalendarRepository;
-import com.atomz.sawonz.domain.leave.entity.CalendarEntity;
-import com.atomz.sawonz.domain.leave.entity.CalendarEntity.CalendarType;
+import com.atomz.sawonz.domain.calendar.entity.CalendarEntity;
+import com.atomz.sawonz.domain.calendar.entity.CalendarEntity.CalendarType;
 import com.atomz.sawonz.domain.user.entity.UsersEntity;
 import com.atomz.sawonz.domain.user.repository.UsersRepository;
 import com.atomz.sawonz.global.exception.ErrorException;
@@ -42,7 +42,7 @@ public class CalendarService {
 
         CalendarType calendarType = typeFromString(calendarRequest.getCalendarType());
 
-        CalendarEntity calendarEntity= calendarRepository.save(
+        CalendarEntity calendarEntity = calendarRepository.save(
                 CalendarRequest.toEntity(user, calendarType, calendarRequest));
 
         return CalendarResponse.fromEntity(

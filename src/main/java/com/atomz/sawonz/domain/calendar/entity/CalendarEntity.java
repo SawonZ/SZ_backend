@@ -1,4 +1,4 @@
-package com.atomz.sawonz.domain.leave.entity;
+package com.atomz.sawonz.domain.calendar.entity;
 
 import com.atomz.sawonz.domain.user.entity.UsersEntity;
 import java.time.LocalDateTime;

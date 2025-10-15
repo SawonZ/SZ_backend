@@ -1,7 +1,7 @@
 package com.atomz.sawonz.domain.calendar.dto;
 
-import com.atomz.sawonz.domain.leave.entity.CalendarEntity;
-import com.atomz.sawonz.domain.leave.entity.CalendarEntity.CalendarType;
+import com.atomz.sawonz.domain.calendar.entity.CalendarEntity;
+import com.atomz.sawonz.domain.calendar.entity.CalendarEntity.CalendarType;
 import com.atomz.sawonz.domain.user.entity.UsersEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
