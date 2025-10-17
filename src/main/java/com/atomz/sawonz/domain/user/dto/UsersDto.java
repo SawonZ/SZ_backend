@@ -133,6 +133,8 @@ public class UsersDto {
         private String positionTitle;
         private Boolean status;
         private String imgUrl;
+        private LocalDate hiredAt;
+        private LocalDate resignedAt;
 
         public static MyCoworkerInfoResponse fromEntity(UsersEntity usersEntity) {
             return MyCoworkerInfoResponse.builder()
@@ -142,6 +144,8 @@ public class UsersDto {
                     .positionTitle(usersEntity.getUserPrivate().getPositionTitle())
                     .status(usersEntity.getStatus())
                     .imgUrl(usersEntity.getImgUrl())
+                    .hiredAt(usersEntity.getUserPrivate().getHiredAt())
+                    .resignedAt(usersEntity.getUserPrivate().getResignedAt())
                     .build();
         }
     }
